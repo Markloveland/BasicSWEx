@@ -1,0 +1,2384 @@
+<?xml version="1.0"?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Domain>
+    <Grid Name="mesh" GridType="Uniform">
+      <Topology TopologyType="Triangle" NumberOfElements="200" NodesPerElement="3">
+        <DataItem Dimensions="200 3" NumberType="Int" Format="HDF">TidalPropagation.h5:/Mesh/mesh/topology</DataItem>
+      </Topology>
+      <Geometry GeometryType="XY">
+        <DataItem Dimensions="126 2" Format="HDF">TidalPropagation.h5:/Mesh/mesh/geometry</DataItem>
+      </Geometry>
+    </Grid>
+    <Grid Name="WSE(m)" GridType="Collection" CollectionType="Temporal">
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="0" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/0</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/3600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="7200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/7200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="10800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/10800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="14400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/14400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="18000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/18000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="21600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/21600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="25200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/25200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="28800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/28800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="32400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/32400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="36000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/36000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="39600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/39600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="43200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/43200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="46800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/46800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="50400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/50400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="54000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/54000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="57600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/57600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="61200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/61200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="64800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/64800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="68400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/68400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="72000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/72000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="75600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/75600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="79200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/79200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="82800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/82800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="86400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/86400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="90000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/90000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="93600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/93600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="97200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/97200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="100800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/100800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="104400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/104400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="108000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/108000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="111600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/111600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="115200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/115200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="118800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/118800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="122400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/122400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="126000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/126000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="129600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/129600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="133200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/133200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="136800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/136800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="140400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/140400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="144000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/144000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="147600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/147600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="151200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/151200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="154800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/154800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="158400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/158400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="162000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/162000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="165600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/165600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="169200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/169200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="172800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/172800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="176400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/176400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="180000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/180000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="183600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/183600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="187200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/187200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="190800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/190800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="194400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/194400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="198000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/198000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="201600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/201600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="205200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/205200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="208800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/208800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="212400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/212400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="216000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/216000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="219600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/219600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="223200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/223200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="226800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/226800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="230400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/230400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="234000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/234000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="237600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/237600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="241200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/241200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="244800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/244800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="248400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/248400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="252000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/252000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="255600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/255600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="259200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/259200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="262800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/262800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="266400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/266400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="270000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/270000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="273600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/273600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="277200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/277200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="280800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/280800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="284400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/284400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="288000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/288000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="291600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/291600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="295200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/295200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="298800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/298800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="302400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/302400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="306000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/306000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="309600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/309600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="313200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/313200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="316800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/316800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="320400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/320400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="324000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/324000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="327600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/327600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="331200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/331200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="334800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/334800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="338400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/338400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="342000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/342000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="345600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/345600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="349200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/349200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="352800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/352800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="356400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/356400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="360000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/360000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="363600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/363600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="367200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/367200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="370800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/370800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="374400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/374400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="378000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/378000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="381600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/381600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="385200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/385200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="388800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/388800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="392400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/392400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="396000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/396000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="399600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/399600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="403200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/403200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="406800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/406800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="410400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/410400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="414000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/414000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="417600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/417600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="421200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/421200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="424800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/424800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="428400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/428400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="432000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/432000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="435600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/435600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="439200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/439200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="442800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/442800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="446400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/446400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="450000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/450000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="453600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/453600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="457200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/457200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="460800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/460800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="464400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/464400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="468000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/468000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="471600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/471600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="475200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/475200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="478800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/478800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="482400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/482400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="486000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/486000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="489600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/489600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="493200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/493200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="496800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/496800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="500400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/500400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="504000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/504000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="507600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/507600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="511200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/511200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="514800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/514800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="518400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/518400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="522000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/522000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="525600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/525600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="529200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/529200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="532800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/532800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="536400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/536400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="540000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/540000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="543600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/543600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="547200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/547200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="550800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/550800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="554400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/554400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="558000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/558000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="561600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/561600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="565200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/565200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="568800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/568800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="572400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/572400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="576000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/576000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="579600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/579600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="583200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/583200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="586800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/586800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="590400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/590400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="594000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/594000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="597600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/597600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="601200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/601200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="604800" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="126 1" Format="HDF">TidalPropagation.h5:/Function/WSE(m)/604800</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+    <Grid Name="depth averaged velocity (m/s)" GridType="Collection" CollectionType="Temporal">
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="0" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/0</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/3600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="7200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/7200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="10800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/10800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="14400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/14400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="18000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/18000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="21600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/21600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="25200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/25200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="28800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/28800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="32400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/32400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="36000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/36000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="39600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/39600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="43200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/43200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="46800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/46800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="50400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/50400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="54000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/54000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="57600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/57600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="61200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/61200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="64800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/64800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="68400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/68400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="72000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/72000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="75600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/75600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="79200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/79200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="82800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/82800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="86400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/86400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="90000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/90000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="93600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/93600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="97200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/97200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="100800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/100800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="104400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/104400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="108000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/108000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="111600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/111600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="115200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/115200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="118800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/118800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="122400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/122400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="126000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/126000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="129600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/129600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="133200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/133200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="136800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/136800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="140400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/140400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="144000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/144000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="147600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/147600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="151200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/151200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="154800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/154800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="158400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/158400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="162000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/162000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="165600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/165600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="169200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/169200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="172800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/172800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="176400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/176400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="180000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/180000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="183600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/183600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="187200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/187200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="190800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/190800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="194400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/194400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="198000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/198000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="201600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/201600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="205200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/205200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="208800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/208800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="212400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/212400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="216000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/216000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="219600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/219600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="223200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/223200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="226800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/226800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="230400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/230400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="234000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/234000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="237600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/237600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="241200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/241200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="244800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/244800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="248400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/248400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="252000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/252000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="255600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/255600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="259200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/259200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="262800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/262800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="266400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/266400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="270000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/270000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="273600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/273600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="277200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/277200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="280800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/280800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="284400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/284400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="288000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/288000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="291600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/291600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="295200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/295200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="298800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/298800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="302400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/302400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="306000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/306000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="309600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/309600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="313200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/313200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="316800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/316800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="320400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/320400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="324000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/324000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="327600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/327600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="331200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/331200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="334800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/334800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="338400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/338400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="342000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/342000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="345600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/345600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="349200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/349200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="352800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/352800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="356400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/356400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="360000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/360000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="363600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/363600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="367200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/367200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="370800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/370800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="374400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/374400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="378000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/378000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="381600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/381600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="385200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/385200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="388800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/388800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="392400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/392400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="396000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/396000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="399600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/399600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="403200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/403200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="406800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/406800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="410400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/410400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="414000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/414000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="417600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/417600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="421200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/421200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="424800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/424800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="428400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/428400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="432000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/432000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="435600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/435600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="439200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/439200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="442800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/442800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="446400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/446400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="450000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/450000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="453600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/453600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="457200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/457200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="460800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/460800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="464400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/464400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="468000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/468000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="471600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/471600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="475200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/475200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="478800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/478800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="482400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/482400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="486000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/486000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="489600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/489600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="493200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/493200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="496800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/496800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="500400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/500400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="504000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/504000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="507600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/507600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="511200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/511200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="514800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/514800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="518400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/518400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="522000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/522000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="525600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/525600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="529200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/529200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="532800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/532800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="536400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/536400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="540000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/540000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="543600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/543600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="547200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/547200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="550800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/550800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="554400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/554400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="558000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/558000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="561600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/561600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="565200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/565200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="568800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/568800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="572400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/572400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="576000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/576000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="579600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/579600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="583200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/583200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="586800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/586800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="590400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/590400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="594000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/594000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="597600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/597600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="601200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/601200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="604800" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="126 3" Format="HDF">TidalPropagation.h5:/Function/depth averaged velocity (m/s)/604800</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>
