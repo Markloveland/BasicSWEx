@@ -3,7 +3,6 @@ import ufl
 from mpi4py import MPI
 from petsc4py import PETSc
 import numpy as np
-from scipy.sparse import csr_matrix
 import numpy.linalg as la
 import time
 
