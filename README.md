@@ -16,9 +16,11 @@ It appears there was a big update and so some minor changes need to be made to c
 
 For now the quickest way to get this test running is to install dolfin-fenicsx version 0.6.0 via conda:
 
+First, install conda and then on the command line run:
+
 conda create -n fenicsx-env
 
-conda activate fenicsx-test
+conda activate fenicsx-env
 
 conda install -c conda-forge fenics-dolfinx=0.6.0 mpich pyvista
 
