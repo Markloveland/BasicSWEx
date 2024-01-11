@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 #######################################################################
 #General user inputs here#
 #Filename for where outputs will go
-filename='TidalPropagation'
+filename='AdvectionTest'
 #global output for every "plot_every" time steps
 plot_every=1
 #any user defined solver paramters
@@ -28,7 +28,7 @@ relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[5500.0,1000.5,0.0]])
+stations = np.array([[10000.0,1000.5,0.0]])
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -48,6 +48,9 @@ y1= 2000.0
 nx=20
 ny=5
 
+#Propagation velocity entering the left side
+vel_boundary_mag = 0.5
+
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 
@@ -58,7 +61,7 @@ domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 #ts is start time in seconds
 ts=0.0
 #tf is final time in seconds
-tf=3600#7*24*60*60
+tf=7*24*60*60
 #time step size in seconds
 dt=3600.0
 #####################################################################################
@@ -80,7 +83,7 @@ V = fe.FunctionSpace(domain, MixedElement([el_h, el_vel]))
 #solution variables
 #this will store solution as we march through time
 u = fe.Function(V)
-
+print("Length of solution = ",u.x.array.shape)
 #split into h, and velocity
 h, vel = u.split()
 
@@ -112,7 +115,7 @@ h_b.interpolate(lambda x: depth + 0*x[0])
 
 
 #Initial condition assignment
-#in this case, initial condition is h=h_b, vel=(0,0)
+#in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
 u_n.sub(0).interpolate(
 	fe.Expression(
 		h_b, 
@@ -120,7 +123,7 @@ u_n.sub(0).interpolate(
   
 u_n.sub(1).interpolate(
 	fe.Expression(
-		as_vector([fe.Constant(domain, ScalarType(0.0)),
+		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
 			fe.Constant(domain, ScalarType(0.0))]),
 		V.sub(1).element.interpolation_points()))
 
@@ -131,6 +134,12 @@ h_ex.interpolate(
 		h_b,
 		V.sub(0).element.interpolation_points())
 	)
+vel_ex = u_ex.sub(1)
+vel_ex.interpolate(
+	fe.Expression(
+		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
+			fe.Constant(domain, ScalarType(0.0))]),
+		V.sub(1).element.interpolation_points()))
 
 ################################################################################
 ################################################################################
@@ -138,27 +147,27 @@ h_ex.interpolate(
 #####Time dependent boundary conditions######
 #####Define boundary condition locations#####
 
-# 1 is the left side, and will be a tidal boundary condition (Dirichlet condition for surface elevation)
-# 2 are all other sides and are no flux condition (U \cdot n = 0)
+# 1 is the left side, and will be an inflow boundary condition (Dirichlet condition for surface elevation and velocity)
+# 3,4 top and bottom sides are no flux condition (U \cdot n = 0)
+# 2 is free outflow condition
 # We can add more numbers for different bc types later
-boundaries = [(1, lambda x: np.isclose(x[0], 0)),
-              (2, lambda x: np.logical_not(np.isclose(x[0],0 )) | np.isclose(x[1],y1) |  np.isclose(x[1],y0) )]
+boundaries = [(1, lambda x: np.isclose(x[0], x0)),
+              (2, lambda x: np.isclose(x[0], x1)),
+              (3, lambda x: np.isclose(x[1], y0)),
+              (4, lambda x: np.isclose(x[1], y1))]
 
 
 ##########Defining functions which actually apply the boundary conditions######
 facet_markers, facet_tag = MarkBoundary(domain, boundaries)
+
 #generate a measure with the marked boundaries
 ds = Measure("ds", domain=domain, subdomain_data=facet_tag)
 
 
 ##########Dirchlet Boundary conditions###################
 # Define the boundary conditions and pass them to the solver
-h_dirichlet_conditions = []
-#For now these will be empty but in general may want to allow for dirichlet u,v
-ux_dirichlet_conditions = []
-ux_dirichlet_dofs = np.array([])
-uy_dirichlet_conditions = []
-uy_dirichlet_dofs = np.array([])
+dirichlet_conditions = []
+
 
 #identify equation numbers associated with boundary conditions
 #this is only necessary for dirichlet conditions
@@ -167,7 +176,9 @@ uy_dirichlet_dofs = np.array([])
 for marker, func in boundaries:
 	if marker == 1:
 		h_dirichlet_dofs,bc = BoundaryCondition("Open", marker, func, u_ex.sub(0), V.sub(0))
-		h_dirichlet_conditions.append(bc)
+		#dirichlet_conditions.append(bc)
+		vel_dirichlet_dofs,bc = BoundaryCondition("Open", marker, func, u_ex.sub(1), V.sub(1))
+		dirichlet_conditions.append(bc)
 
 
 
@@ -176,7 +187,7 @@ for marker, func in boundaries:
 def evaluate_tidal_boundary(t):
 	#hard coded parameters for mag and frequency
 	alpha = 0.00014051891708
-	mag = 0.15
+	mag = 0.0#0.15
 	return mag*np.cos(t*alpha)
 
 
@@ -191,7 +202,8 @@ def update_boundary(t,hb):
 
 #define h_b at boundary of dof so we don't need to repeat in time loop
 #hb_boundary is a vector that will not change through time
-hb_boundary = h_ex.x.array[h_dirichlet_dofs]
+#hb_boundary = h_ex.x.array[h_dirichlet_dofs]
+vel_boundary = vel_ex.x.array[vel_dirichlet_dofs]  
 
 ################################################################################
 ################################################################################
@@ -260,10 +272,10 @@ F += inner(S,p)*dx
 
 #now adding in global boundary terms
 for marker, func in boundaries:
-	if marker == 1:
+	if (marker == 1) or (marker == 2):
 		#This is the open boundary in this case
 		F += dot(dot(Fu, n), p) * ds(marker)
-	elif marker == 2:
+	else:
 		#this is the wall condition, no flux on this part
 		F += dot(dot(Fu_wall, n), p)*ds(marker)
 
@@ -333,7 +345,7 @@ plot_global_output(u_n,h_b,V_scalar,V_vel,xdmf,ts)
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,h_dirichlet_conditions, domain.comm, solver_parameters=params)
+Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params)
 
 
 
@@ -358,7 +370,6 @@ for a in range(min(2,nt)):
 	#by default we print out on screen each time step
 	print('Time Step Number',a,'Out of',nt)
 	print(a/nt*100,'% Complete')
-	print(len(u.x.array[:]))
 	#save new solution as previous solution
 	u_n_old.x.array[:] = u_n.x.array[:]
 	u_n.x.array[:] = u.x.array[:]
@@ -366,8 +377,10 @@ for a in range(min(2,nt)):
 	t += dt
 	#update any dirichlet boundary conditions
 	#for now just the one but may expand in future
-	u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
-	u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	#u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
+	u_ex.sub(1).x.array[vel_dirichlet_dofs]=vel_boundary
+	#u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	u.x.array[vel_dirichlet_dofs] = u_ex.x.array[vel_dirichlet_dofs]
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
@@ -387,8 +400,10 @@ for a in range(2, nt):
 	t += dt
 	#update any dirichlet boundary conditions
 	#for now just the one but may expand in future
-	u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
-	u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	#u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
+	u_ex.sub(1).x.array[vel_dirichlet_dofs]=vel_boundary
+	#u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	u.x.array[vel_dirichlet_dofs] = u_ex.x.array[vel_dirichlet_dofs]
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
