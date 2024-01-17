@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 #Filename for where outputs will go
 filename='AdvectionTest'
 #global output for every "plot_every" time steps
-plot_every=1
+plot_every=15
 #any user defined solver paramters
 rel_tol=1e-5
 abs_tol=1e-6
@@ -49,7 +49,10 @@ nx=20
 ny=5
 
 #Propagation velocity entering the left side
-vel_boundary_mag = 0.5
+#A proper bc should be flux maybe?
+depth = 2
+vel_boundary_mag = 9.0
+flux_boundary_mag = depth*vel_boundary_mag
 
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
@@ -61,9 +64,9 @@ domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 #ts is start time in seconds
 ts=0.0
 #tf is final time in seconds
-tf=7*24*60*60
+tf=8*60*60
 #time step size in seconds
-dt=3600.0
+dt=60.0#3600.0
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -108,7 +111,6 @@ p = as_vector((p1,p2[0],p2[1]))
 #Bathymetry assignment
 
 #for this problem, assume uniform depth of 10 m
-depth=10.0
 h_b = fe.Function(V.sub(0).collapse()[0])
 #Event though constant still needs to be function of x by convention
 h_b.interpolate(lambda x: depth + 0*x[0])
@@ -176,9 +178,12 @@ dirichlet_conditions = []
 for marker, func in boundaries:
 	if marker == 1:
 		h_dirichlet_dofs,bc = BoundaryCondition("Open", marker, func, u_ex.sub(0), V.sub(0))
-		#dirichlet_conditions.append(bc)
+		dirichlet_conditions.append(bc)
 		vel_dirichlet_dofs,bc = BoundaryCondition("Open", marker, func, u_ex.sub(1), V.sub(1))
 		dirichlet_conditions.append(bc)
+
+
+
 
 
 
@@ -202,7 +207,7 @@ def update_boundary(t,hb):
 
 #define h_b at boundary of dof so we don't need to repeat in time loop
 #hb_boundary is a vector that will not change through time
-#hb_boundary = h_ex.x.array[h_dirichlet_dofs]
+hb_boundary = h_ex.x.array[h_dirichlet_dofs]
 vel_boundary = vel_ex.x.array[vel_dirichlet_dofs]  
 
 ################################################################################
@@ -242,6 +247,7 @@ g_vec = as_vector((0,
  					-g*(h-h_b)*h_b.dx(1)))
 #there are many friction laws, here is an example of a quadratic law
 #which matches an operational model ADCIRC
+'''
 eps=1e-8
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, eps, pow(ux*ux + uy*uy, 0.5))
 FFACTOR = 0.0025
@@ -253,6 +259,14 @@ fric_vec = as_vector((0,
 					Cd*ux*mag_v,
 					Cd*uy*mag_v))
 
+'''
+#Linear friction law
+cf=0.0001
+fric_vec=as_vector((0,
+                    ux*cf,
+                    uy*cf))
+
+#try no friction
 S = g_vec+fric_vec
 
 
@@ -276,6 +290,7 @@ for marker, func in boundaries:
 		#This is the open boundary in this case
 		F += dot(dot(Fu, n), p) * ds(marker)
 	else:
+		print("Adding wall condition \n\n")
 		#this is the wall condition, no flux on this part
 		F += dot(dot(Fu_wall, n), p)*ds(marker)
 
@@ -377,16 +392,16 @@ for a in range(min(2,nt)):
 	t += dt
 	#update any dirichlet boundary conditions
 	#for now just the one but may expand in future
-	#u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
+	u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
 	u_ex.sub(1).x.array[vel_dirichlet_dofs]=vel_boundary
-	#u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
 	u.x.array[vel_dirichlet_dofs] = u_ex.x.array[vel_dirichlet_dofs]
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
-	if a%plot_every==0 and plot_every <= nt:
+	if (a+1)%plot_every==0 and plot_every <= nt:
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
 #Take remainder of time steps with 2nd order BDF2 scheme
@@ -400,16 +415,17 @@ for a in range(2, nt):
 	t += dt
 	#update any dirichlet boundary conditions
 	#for now just the one but may expand in future
-	#u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
+	u_ex.sub(0).x.array[h_dirichlet_dofs] = update_boundary(t,hb_boundary)
 	u_ex.sub(1).x.array[vel_dirichlet_dofs]=vel_boundary
-	#u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
+	u.x.array[h_dirichlet_dofs] = u_ex.x.array[h_dirichlet_dofs]
 	u.x.array[vel_dirichlet_dofs] = u_ex.x.array[vel_dirichlet_dofs]
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
-	if a%plot_every==0:
+	if (a+1)%plot_every==0:
+		print("Plotting solution for t = ", str(t/3600.0),"hr")
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
 

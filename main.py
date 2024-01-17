@@ -373,7 +373,7 @@ for a in range(min(2,nt)):
 	#add data to station variable
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
-	if a%plot_every==0 and plot_every <= nt:
+	if (a+1)%plot_every==0 and plot_every <= nt:
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
 #Take remainder of time steps with 2nd order BDF2 scheme
@@ -394,7 +394,7 @@ for a in range(2, nt):
 	#add data to station variable
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
-	if a%plot_every==0:
+	if (a+1)%plot_every==0:
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
 
