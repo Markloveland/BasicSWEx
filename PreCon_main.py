@@ -3,12 +3,15 @@ import sys
 np.set_printoptions(threshold=sys.maxsize)
 from dolfinx import fem as fe, mesh,io
 from mpi4py import MPI
+'''
 from ufl import (
     VectorElement, TestFunction, TrialFunction, FacetNormal, as_matrix,
     as_vector, as_tensor, dot, inner, grad, dx, ds, dS,
-    jump, avg,sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
-    MixedElement, FiniteElement, TestFunctions, Measure
+    jump, avg, sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
+    MixedElement, FiniteElement, TestFunctions, Measure, Mesh, VectorElement, Cell
 )
+'''
+import ufl
 from petsc4py.PETSc import ScalarType
 from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
@@ -55,17 +58,62 @@ vel_boundary_mag = 9.0
 flux_boundary_mag = depth*vel_boundary_mag
 
 #creates dolfinx mesh object partioned via MPI
-domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
+#domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
+
+#Alternatively, build a mesh and force elements to be same order as streamlines
+#just for proof of concept
+
+#given nx by ny, start at top of mesh and go left to right
+x_coords = np.linspace(x0,x1,nx+1)
+y_coords = np.linspace(y0,y1,ny+1)
+#now tile them to create inufl.dividual nodes
+x_coords = np.tile(x_coords,ny+1)
+y_coords = np.repeat(y_coords,nx+1)
+coords=np.column_stack([x_coords,y_coords])
+
+#create cell order so that it goes left to right
+nm = np.zeros((nx*ny*2,3))
+cell_no =0
+idx=0
+for a in range(ny):
+	for b in range(nx):
+		nw_node =  idx+(nx+1)
+		ne_node = idx+(nx+2)
+		sw_node = idx
+		se_node = idx+1
+		nm[cell_no] = np.array([sw_node,ne_node,nw_node])
+		cell_no+=1
+		nm[cell_no] = np.array([sw_node,se_node,ne_node])
+		cell_no+=1
+		idx+=1
+		if b==nx-1:
+			#skip one at end of column
+			idx+=1
+print(coords.shape)
+print(coords)
+print(nm.shape)
+print(nm)
+
+gdim, shape, degree = 2, "triangle", 1
+cell = ufl.Cell(shape, geometric_dimension=gdim)
+element = ufl.VectorElement("Lagrange", cell, degree)
+domain = mesh.create_mesh(MPI.COMM_WORLD, nm, coords, ufl.Mesh(element))
+
+#plot mesh to see if it works
+xdmf = io.XDMFFile(domain.comm, filename+"/"+filename+"_mesh.xdmf", "w")
+xdmf.write_mesh(domain)
+xdmf.close()
+
 
 
 ####################################################################################
 ###################################################################################
 ##########Define Length of simulation and time step size##########################
-#ts is start time in seconds
+#ts is start time in seconufl.ds
 ts=0.0
-#tf is final time in seconds
+#tf is final time in seconufl.ds
 tf=8*60*60
-#time step size in seconds
+#time step size in seconufl.ds
 dt=60.0#3600.0
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
@@ -75,13 +123,14 @@ p_type = "DG"
 #polynomial order of finite element, h is first , (u,v) is second
 p_degree = [1,1]
 
+
 # We use mixed elements, these are ufl objects for symbolic math
-el_h   = FiniteElement(p_type, domain.ufl_cell(), degree=p_degree[0])
-el_vel = VectorElement(p_type, domain.ufl_cell(), degree=p_degree[1], dim = 2)
+el_h   = ufl.FiniteElement(p_type, domain.ufl_cell(), degree=p_degree[0])
+el_vel = ufl.VectorElement(p_type, domain.ufl_cell(), degree=p_degree[1], dim = 2)
 
 
 #V will hold the function space info of the mixed elements
-V = fe.FunctionSpace(domain, MixedElement([el_h, el_vel]))
+V = fe.FunctionSpace(domain, ufl.MixedElement([el_h, el_vel]))
 
 #solution variables
 #this will store solution as we march through time
@@ -97,9 +146,9 @@ u_n_old = fe.Function(V)
 u_ex = fe.Function(V)
 
 #Create test functions
-p1, p2 = TestFunctions(V)
+p1, p2 = ufl.TestFunctions(V)
 # object that concatenates all test functions into single variable, like u
-p = as_vector((p1,p2[0],p2[1]))
+p = ufl.as_vector((p1,p2[0],p2[1]))
 
 ################################################################################
 ################################################################################
@@ -112,7 +161,7 @@ p = as_vector((p1,p2[0],p2[1]))
 
 #for this problem, assume uniform depth of 10 m
 h_b = fe.Function(V.sub(0).collapse()[0])
-#Event though constant still needs to be function of x by convention
+#Event though constant still neeufl.ds to be function of x by convention
 h_b.interpolate(lambda x: depth + 0*x[0])
 
 
@@ -125,7 +174,7 @@ u_n.sub(0).interpolate(
   
 u_n.sub(1).interpolate(
 	fe.Expression(
-		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
+		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
 			fe.Constant(domain, ScalarType(0.0))]),
 		V.sub(1).element.interpolation_points()))
 
@@ -139,7 +188,7 @@ h_ex.interpolate(
 vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
-		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
+		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
 			fe.Constant(domain, ScalarType(0.0))]),
 		V.sub(1).element.interpolation_points()))
 
@@ -163,7 +212,7 @@ boundaries = [(1, lambda x: np.isclose(x[0], x0)),
 facet_markers, facet_tag = MarkBoundary(domain, boundaries)
 
 #generate a measure with the marked boundaries
-ds = Measure("ds", domain=domain, subdomain_data=facet_tag)
+ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tag)
 
 
 ##########Dirchlet Boundary conditions###################
@@ -218,9 +267,9 @@ vel_boundary = vel_ex.x.array[vel_dirichlet_dofs]
 #aliasing to make reading easier
 h, ux, uy = u[0], u[1], u[2]
 #also shorthand reference for flux variable:
-Q      =   as_vector((u[0], u[1]*u[0], u[2]*u[0] ))
-Qn     =   as_vector((u_n[0], u_n[1]*u_n[0], u_n[2]*u_n[0]))
-Qn_old =   as_vector((u_n_old[0], u_n_old[1]*u_n_old[0], u_n_old[2]*u_n_old[0] )) 
+Q      =   ufl.as_vector((u[0], u[1]*u[0], u[2]*u[0] ))
+Qn     =   ufl.as_vector((u_n[0], u_n[1]*u_n[0], u_n[2]*u_n[0]))
+Qn_old =   ufl.as_vector((u_n_old[0], u_n_old[1]*u_n_old[0], u_n_old[2]*u_n_old[0] )) 
 
 
 #g is gravitational constant
@@ -228,13 +277,13 @@ g=9.81
 
 
 #Flux tensor from SWE
-Fu = as_tensor([[h*ux,h*uy], 
+Fu = ufl.as_tensor([[h*ux,h*uy], 
 				[h*ux*ux+ 0.5*g*h*h-0.5*g*h_b*h_b, h*ux*uy],
 				[h*ux*uy,h*uy*uy+0.5*g*h*h-0.5*g*h_b*h_b]
 				])
 
 #Flux tensor for SWE if normal flow is 0
-Fu_wall = as_tensor([[0,0], 
+Fu_wall = ufl.as_tensor([[0,0], 
 					[0.5*g*h*h-0.5*g*h_b*h_b, 0],
 					[0,0.5*g*h*h-0.5*g*h_b*h_b]
 					])
@@ -242,19 +291,19 @@ Fu_wall = as_tensor([[0,0],
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
-g_vec = as_vector((0,
+g_vec = ufl.as_vector((0,
  					-g*(h-h_b)*h_b.dx(0),
  					-g*(h-h_b)*h_b.dx(1)))
 #there are many friction laws, here is an example of a quadratic law
 #which matches an operational model ADCIRC
 '''
 eps=1e-8
-mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, eps, pow(ux*ux + uy*uy, 0.5))
+mag_v = ufl.conditional(pow(ux*ux + uy*uy, 0.5) < eps, eps, pow(ux*ux + uy*uy, 0.5))
 FFACTOR = 0.0025
 HBREAK = 1.0
 FTHETA = 10.0
 FGAMMA = 1.0/3.0
-Cd = conditional(h>eps, (FFACTOR*(1+HBREAK/h)**FTHETA)**(FGAMMA/FTHETA), eps  )
+Cd = ufl.conditional(h>eps, (FFACTOR*(1+HBREAK/h)**FTHETA)**(FGAMMA/FTHETA), eps  )
 fric_vec = as_vector((0,
 					Cd*ux*mag_v,
 					Cd*uy*mag_v))
@@ -262,7 +311,7 @@ fric_vec = as_vector((0,
 '''
 #Linear friction law
 cf=0.0001
-fric_vec=as_vector((0,
+fric_vec=ufl.as_vector((0,
                     ux*cf,
                     uy*cf))
 
@@ -272,39 +321,39 @@ S = g_vec+fric_vec
 
 
 #normal vector
-n = FacetNormal(domain)
+n = ufl.FacetNormal(domain)
 
 
 
 
 #begin constructing the weak form, this is standard weak form from IBP
 #start adding to residual, beggining with body term
-F = -inner(Fu,grad(p))*dx
+F = -ufl.inner(Fu,ufl.grad(p))*ufl.dx
 #add RHS forcing
-F += inner(S,p)*dx
+F += ufl.inner(S,p)*ufl.dx
 
 
 #now adding in global boundary terms
 for marker, func in boundaries:
 	if (marker == 1) or (marker == 2):
 		#This is the open boundary in this case
-		F += dot(dot(Fu, n), p) * ds(marker)
+		F += ufl.dot(ufl.dot(Fu, n), p) * ds(marker)
 	else:
 		print("Adding wall condition \n\n")
 		#this is the wall condition, no flux on this part
-		F += dot(dot(Fu_wall, n), p)*ds(marker)
+		F += ufl.dot(ufl.dot(Fu_wall, n), p)*ds(marker)
 
 #now adding interior boundary terms using Lax-Friedrichs upwinding for DG
 eps=1e-8
 #attempt at full expression from https://docu.ngsolve.org/v6.2.1810/i-tutorials/unit-3.4-simplehyp/shallow2D.html
-vela =  as_vector((u[1]('+'),u[2]('+')))
-velb =  as_vector((u[1]('-'),u[2]('-')))
-vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),eps)
-vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),eps)
-C = conditional( (vnorma + sqrt(g*u[0]('+'))) > (vnormb + sqrt(g*u[0]('-'))), (vnorma + sqrt(g*u[0]('+'))) ,  (vnormb + sqrt(g*u[0]('-')))) 
-flux = dot(avg(Fu), n('+')) + 0.5*C*jump(Q)
+vela =  ufl.as_vector((u[1]('+'),u[2]('+')))
+velb =  ufl.as_vector((u[1]('-'),u[2]('-')))
+vnorma = ufl.conditional(ufl.sqrt(ufl.dot(vela,vela)) > eps,ufl.sqrt(ufl.dot(vela,vela)),eps)
+vnormb = ufl.conditional(ufl.sqrt(ufl.dot(velb,velb)) > eps,ufl.sqrt(ufl.dot(velb,velb)),eps)
+C = ufl.conditional( (vnorma + ufl.sqrt(g*u[0]('+'))) > (vnormb + ufl.sqrt(g*u[0]('-'))), (vnorma + ufl.sqrt(g*u[0]('+'))) ,  (vnormb + ufl.sqrt(g*u[0]('-')))) 
+flux = ufl.dot(ufl.avg(Fu), n('+')) + 0.5*C*ufl.jump(Q)
 
-F += inner(flux, jump(p))*dS
+F += ufl.inner(flux, ufl.jump(p))*ufl.dS
 
 
 #now add terms related to time step
@@ -317,7 +366,7 @@ theta1 = fe.Constant(domain, ScalarType(theta))
 #theta1=0 is 1st order implicit Euler, theta1=1 is 2nd order BDF2
 dQdt = theta1*fe.Constant(domain,ScalarType(1.0/dt))*(1.5*Q - 2*Qn + 0.5*Qn_old) + (1-theta1)*fe.Constant(domain,ScalarType(1.0/dt))*(Q - Qn)
 #add to weak form
-F+=inner(dQdt,p)*dx
+F+=ufl.inner(dQdt,p)*ufl.dx
 
 
 #Weak form and initial conditions are now arranged, 
