@@ -3,11 +3,11 @@
 <Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
   <Domain>
     <Grid Name="mesh" GridType="Uniform">
-      <Topology TopologyType="Triangle" NumberOfElements="200" NodesPerElement="3">
-        <DataItem Dimensions="200 3" NumberType="Int" Format="HDF">AdvectionTest.h5:/Mesh/mesh/topology</DataItem>
+      <Topology TopologyType="Quadrilateral" NumberOfElements="4" NodesPerElement="4">
+        <DataItem Dimensions="4 4" NumberType="Int" Format="HDF">AdvectionTest.h5:/Mesh/mesh/topology</DataItem>
       </Topology>
       <Geometry GeometryType="XY">
-        <DataItem Dimensions="126 2" Format="HDF">AdvectionTest.h5:/Mesh/mesh/geometry</DataItem>
+        <DataItem Dimensions="9 2" Format="HDF">AdvectionTest.h5:/Mesh/mesh/geometry</DataItem>
       </Geometry>
     </Grid>
     <Grid Name="WSE(m)" GridType="Collection" CollectionType="Temporal">
@@ -15,91 +15,427 @@
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="0" />
         <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/0</DataItem>
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/0</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="60" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/60</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="120" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/120</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="180" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/180</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="240" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/240</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="300" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/300</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="360" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/360</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="420" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/420</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="480" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/480</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="540" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/540</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="600" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="660" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/660</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="720" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/720</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="780" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/780</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="840" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/840</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="WSE(m)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="900" />
         <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/900</DataItem>
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/900</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="960" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/960</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1020" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1020</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1080" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1080</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1140" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1140</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1200" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1260" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1260</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1320" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1320</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1380" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1380</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1440" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1440</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1500" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1500</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1560" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1560</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1620" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1620</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1680" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1680</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1740" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1740</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="WSE(m)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="1800" />
         <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1800</DataItem>
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1860" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1860</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1920" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1920</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1980" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/1980</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2040" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2040</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2100" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2100</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2160" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2160</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2220" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2220</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2280" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2280</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2340" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2340</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2400" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2460" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2460</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2520" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2520</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2580" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2580</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2640" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2640</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="WSE(m)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="2700" />
         <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2700</DataItem>
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2700</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2760" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2760</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2820" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2820</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2880" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2880</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2940" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/2940</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3000" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3060" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3060</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3120" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3120</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3180" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3180</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3240" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3240</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3300" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3300</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3360" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3360</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3420" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3420</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3480" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3480</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="WSE(m)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3540" />
+        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3540</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="WSE(m)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="3600" />
         <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3600</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="4500" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/4500</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="5400" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/5400</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="6300" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/6300</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="7200" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/7200</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="8100" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/8100</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="9000" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/9000</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="9900" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/9900</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="WSE(m)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="10800" />
-        <Attribute Name="WSE(m)" AttributeType="Scalar" Center="Node">
-          <DataItem Dimensions="126 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/10800</DataItem>
+          <DataItem Dimensions="9 1" Format="HDF">AdvectionTest.h5:/Function/WSE(m)/3600</DataItem>
         </Attribute>
       </Grid>
     </Grid>
@@ -108,84 +444,427 @@
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="0" />
         <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/0</DataItem>
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/0</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="60" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/60</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="120" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/120</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="180" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/180</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="240" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/240</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="300" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/300</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="360" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/360</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="420" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/420</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="480" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/480</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="540" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/540</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="600" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/600</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="660" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/660</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="720" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/720</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="780" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/780</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="840" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/840</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="900" />
         <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/900</DataItem>
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/900</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="960" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/960</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1020" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1020</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1080" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1080</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1140" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1140</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1200" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1200</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1260" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1260</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1320" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1320</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1380" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1380</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1440" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1440</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1500" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1500</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1560" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1560</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1620" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1620</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1680" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1680</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1740" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1740</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="1800" />
         <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1800</DataItem>
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1800</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1860" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1860</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1920" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1920</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="1980" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/1980</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2040" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2040</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2100" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2100</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2160" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2160</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2220" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2220</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2280" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2280</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2340" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2340</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2400" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2400</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2460" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2460</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2520" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2520</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2580" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2580</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2640" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2640</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="2700" />
         <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2700</DataItem>
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2700</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2760" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2760</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2820" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2820</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2880" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2880</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="2940" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/2940</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3000" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3000</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3060" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3060</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3120" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3120</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3180" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3180</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3240" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3240</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3300" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3300</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3360" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3360</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3420" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3420</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3480" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3480</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
+        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
+        <Time Value="3540" />
+        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3540</DataItem>
         </Attribute>
       </Grid>
       <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
         <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
         <Time Value="3600" />
         <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3600</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="4500" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/4500</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="5400" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/5400</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="6300" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/6300</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="7200" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/7200</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="8100" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/8100</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="9000" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/9000</DataItem>
-        </Attribute>
-      </Grid>
-      <Grid Name="depth averaged velocity (m/s)" GridType="Uniform">
-        <xi:include xpointer="xpointer(/Xdmf/Domain/Grid[@GridType='Uniform'][1]/*[self::Topology or self::Geometry])" />
-        <Time Value="9900" />
-        <Attribute Name="depth averaged velocity (m/s)" AttributeType="Vector" Center="Node">
-          <DataItem Dimensions="126 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/9900</DataItem>
+          <DataItem Dimensions="9 3" Format="HDF">AdvectionTest.h5:/Function/depth averaged velocity (m/s)/3600</DataItem>
         </Attribute>
       </Grid>
     </Grid>

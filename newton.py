@@ -5,14 +5,18 @@ from petsc4py import PETSc
 import numpy as np
 import numpy.linalg as la
 import time
+from scipy.sparse import csr_matrix
 
+def petsc_to_csr(A):
+    indptr, indices, data = A.getValuesCSR()
+    return csr_matrix((data, indices, indptr), shape=A.size)
 
 class CustomNewtonProblem:
 
     """An all-in-one class that solves a nonlinear problem. . .
     """
     
-    def __init__(self,F,u,bc,comm,solver_parameters={}):
+    def __init__(self,F,u,bc,comm,solver_parameters={},mesh=None):
         """initialize the problem
         
         F -- Ufl weak form
@@ -58,8 +62,11 @@ class CustomNewtonProblem:
 
         self.solver.setTolerances(rtol=1e-8, atol=1e-9, max_it=1000)
         self.solver.setOperators(self.A)
-        self.pc = self.solver.getPC()
-        self.pc.setType(self.pc_type)
+        if self.pc_type == 'line_smooth':
+            self.pc = LinePreconditioner(self.A, mesh)
+        else:
+            self.pc = self.solver.getPC()
+            self.pc.setType(self.pc_type)
 
 
     def log(self, *msg):
@@ -92,10 +99,28 @@ class CustomNewtonProblem:
             L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
             # Solve linear problem
-            #start = time.time()
-            #print("pc type", solver.getPC().getType())
-            solver.solve(L, dx.vector)
-            #print("solved in ", time.time()-start)
+            if self.pc_type == 'line_smooth':
+                #print("A cond num", la.cond(petsc_to_csr(A).todense()))
+                new_A, new_rhs = self.pc.precondition(L)
+                #print("new_A cond num", la.cond(petsc_to_csr(new_A).todense()))
+                #solver.reset()
+                #print(solver.getPC().getType())
+                #raise ValueError()
+                solver = PETSc.KSP().create(self.comm)
+                solver.setType("gmres")
+                solver.setTolerances(rtol=1e-8, atol=1e-9)
+                solver.getPC().setType("mat")
+                solver.setOperators(A, self.pc.mat)
+                start = time.time()
+                solver.solve(L, dx.vector)
+                print("solved in ", time.time()-start)
+            else:
+                start = time.time()
+                #print("pc type", solver.getPC().getType())
+                #print("A cond num", la.cond(petsc_to_csr(A).todense()))
+                solver.solve(L, dx.vector)
+
+                print("solved in ", time.time()-start)
             
             dx.x.scatter_forward()
             self.log(f"linear solver convergence {solver.getConvergedReason()}" +
@@ -122,3 +147,47 @@ class CustomNewtonProblem:
             self.log(f"Netwon Iteration {i}: Correction norm {correction_norm}")
             if correction_norm < self.atol:
                 break
+class LinePreconditioner:
+
+    def __init__(self, A, mesh):
+        """Initialize the preconditioner from the 
+        """
+
+        dim = mesh.topology.dim
+        num_cells = mesh.topology.index_map(dim).size_local
+        print("local num cells", num_cells)
+        #hardcoded for now
+        block_size = 2*A.size[0] // num_cells
+        print("block size", block_size)
+        print("Matri size", A.size)
+        self.block_size = block_size
+        self.A = A
+        mat = PETSc.Mat()
+        #set original sparsity pattern
+        #will be equal to number of dof per line
+        mat.createAIJ((A.size[0], A.size[0]), nnz=np.full(A.size[0], block_size, dtype=np.int32), comm=mesh.comm)
+        mat.setUp()
+        mat.setBlockSize(block_size)
+        self.mat = mat
+
+    def precondition(self, rhs):
+        """Apply the block preconditioner to A and the right hand side
+
+        returns P^-1 * A, P^-1 * rhs
+        """
+
+        old_block_size = self.A.getBlockSize()
+        self.A.setBlockSize(self.block_size)
+        inv = self.A.invertBlockDiagonal()
+        self.A.setBlockSize(old_block_size)
+        start_ind, stop_ind = self.mat.owner_range
+        block_inds = np.arange(start_ind//self.block_size, stop_ind//self.block_size+1)
+        block_inds = block_inds.astype(np.int32)
+        self.mat.setValuesBlockedCSR(block_inds, block_inds[:-1], inv)
+        #for i in range(len(inv)):
+        #    mat.setValuesBlocked(block_inds[i:i+1], block_inds[i:i+1], inv[i])
+        self.mat.assemble()
+        new_rhs = self.mat.createVecRight()
+        self.mat.mult(rhs, new_rhs)
+        return self.mat.matMult(self.A), new_rhs
+

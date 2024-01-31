@@ -2,7 +2,9 @@ import numpy as np
 import sys
 np.set_printoptions(threshold=sys.maxsize)
 from dolfinx import fem as fe, mesh,io
+#from dolfinx.graph import adjacencylist
 from mpi4py import MPI
+import time
 '''
 from ufl import (
     VectorElement, TestFunction, TrialFunction, FacetNormal, as_matrix,
@@ -22,13 +24,13 @@ import matplotlib.pyplot as plt
 #Filename for where outputs will go
 filename='AdvectionTest'
 #global output for every "plot_every" time steps
-plot_every=15
+plot_every=1
 #any user defined solver paramters
 rel_tol=1e-5
 abs_tol=1e-6
 max_iter=10
 relax_param=1
-params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
+params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "line_smooth"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
 stations = np.array([[10000.0,1000.5,0.0]])
@@ -48,8 +50,8 @@ y1= 2000.0
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=20
-ny=5
+nx=2#20
+ny=2#5
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
@@ -58,7 +60,7 @@ vel_boundary_mag = 9.0
 flux_boundary_mag = depth*vel_boundary_mag
 
 #creates dolfinx mesh object partioned via MPI
-#domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
+domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny],mesh.CellType.quadrilateral)
 
 #Alternatively, build a mesh and force elements to be same order as streamlines
 #just for proof of concept
@@ -89,22 +91,80 @@ for a in range(ny):
 		if b==nx-1:
 			#skip one at end of column
 			idx+=1
-print(coords.shape)
-print(coords)
-print(nm.shape)
-print(nm)
+#print(coords.shape)
+#print(coords)
+#print(nm.shape)
+#print(nm)
 
-gdim, shape, degree = 2, "triangle", 1
-cell = ufl.Cell(shape, geometric_dimension=gdim)
-element = ufl.VectorElement("Lagrange", cell, degree)
-domain = mesh.create_mesh(MPI.COMM_WORLD, nm, coords, ufl.Mesh(element))
 
+
+#gdim, shape, degree = 2, "triangle", 1
+#cell = ufl.Cell(shape, geometric_dimension=gdim)
+#element = ufl.VectorElement("Lagrange", cell, degree)
+#domain = mesh.create_mesh(MPI.COMM_SELF, nm, coords, ufl.Mesh(element))
+
+
+'''
+#This seems to reorder everything
+#print(domain.geometry.x)
+# show nodal order--adjusted back to input
+idcs = np.argsort(domain.geometry.input_global_indices)
+#print(idcs)
+#print(domain.geometry.x[idcs,:])
+#can we overwrite?
+
+
+domain.geometry.x[:,:]=domain.geometry.x[idcs,:]
+#domain.topology.create_connectivity(domain.topology.dim, domain.topology.dim)
+#something. like this?
+#dests = np.full(topo.num_nodes, comm.rank, dtype=np.int32)
+#offsets = np.arange(topo.num_nodes+1, dtype=np.int32)
+#dolfinx.graph.create_adjacencylist(dests, offsets)
+
+
+#adj = adjacencylist(nm)
+
+
+domain.geometry.dofmap.array[:] = nm.flatten()
+
+#print(domain.geometry.dofmap.array[:])
+#print(nm)
+#domain.topology.index_map(2)
+
+
+#domain.topology.create_connectivity(domain.topology.dim, domain.topology.dim)
+#domain.topology.create_connectivity(domain.topology.dim-1, domain.topology.dim)
+#domain.topology.create_connectivity(domain.topology.dim, domain.topology.dim-1)
+#domain.topology.create_connectivity(domain.topology.dim-1, domain.topology.dim-1)
+
+#domain.topology.set_connectivity(adj,2,0)
+
+meshconnectivity=domain.geometry.dofmap
+domain.geometry.input_global_indices[:]=np.arange(len(domain.geometry.input_global_indices))
+
+for i in range(domain.topology.dim):
+        domain.topology.create_entities(i)
+        for j in range(domain.topology.dim):
+        	domain.topology.create_connectivity(i, j)
+
+#overwrite maybe?
+
+#Why can't we do this?
+#domain.topology.set_connectivity(domain.geometry.dofmap,2,2)
+
+#print(nm)
+#print(meshconnectivity)
 #plot mesh to see if it works
-xdmf = io.XDMFFile(domain.comm, filename+"/"+filename+"_mesh.xdmf", "w")
-xdmf.write_mesh(domain)
-xdmf.close()
+#xdmf = io.XDMFFile(domain.comm, filename+"/"+filename+"_mesh.xdmf", "w")
+#xdmf.write_mesh(domain)
+#xdmf.close()
 
 
+
+
+'''
+print(domain.geometry.x)
+print(domain.geometry.dofmap)
 
 ####################################################################################
 ###################################################################################
@@ -112,9 +172,9 @@ xdmf.close()
 #ts is start time in seconufl.ds
 ts=0.0
 #tf is final time in seconufl.ds
-tf=8*60*60
+tf=60*60
 #time step size in seconufl.ds
-dt=60.0#3600.0
+dt=60
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -132,10 +192,21 @@ el_vel = ufl.VectorElement(p_type, domain.ufl_cell(), degree=p_degree[1], dim = 
 #V will hold the function space info of the mixed elements
 V = fe.FunctionSpace(domain, ufl.MixedElement([el_h, el_vel]))
 
+V0 = fe.FunctionSpace(domain, ("Discontinuous Lagrange", 0))
+#Let's see if we can find stuff
+#need to be able to connect cell -> dof
+#what node #s for each cell
+
+#Centroids of each cell
+DG1_DOFS=V.sub(0).collapse()[0].tabulate_dof_coordinates()
+print(DG1_DOFS)
+DG1_V_DOFS=V.sub(0).collapse()[0].tabulate_dof_coordinates()
+
+
 #solution variables
 #this will store solution as we march through time
 u = fe.Function(V)
-print("Length of solution = ",u.x.array.shape)
+
 #split into h, and velocity
 h, vel = u.split()
 
@@ -167,6 +238,8 @@ h_b.interpolate(lambda x: depth + 0*x[0])
 
 #Initial condition assignment
 #in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
+#introduce a shock to system to mess with conditioning
+
 u_n.sub(0).interpolate(
 	fe.Expression(
 		h_b, 
@@ -174,8 +247,8 @@ u_n.sub(0).interpolate(
   
 u_n.sub(1).interpolate(
 	fe.Expression(
-		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(0.0))]),
+		ufl.as_vector([fe.Constant(domain, ScalarType(0.0)),
+			fe.Constant(domain, ScalarType(vel_boundary_mag-4))]),
 		V.sub(1).element.interpolation_points()))
 
 #also need to input bathymetry to u_ex to store h_b
@@ -188,9 +261,10 @@ h_ex.interpolate(
 vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
-		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(0.0))]),
+		ufl.as_vector([fe.Constant(domain, ScalarType(0.0)),
+			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
+
 
 ################################################################################
 ################################################################################
@@ -202,10 +276,10 @@ vel_ex.interpolate(
 # 3,4 top and bottom sides are no flux condition (U \cdot n = 0)
 # 2 is free outflow condition
 # We can add more numbers for different bc types later
-boundaries = [(1, lambda x: np.isclose(x[0], x0)),
-              (2, lambda x: np.isclose(x[0], x1)),
-              (3, lambda x: np.isclose(x[1], y0)),
-              (4, lambda x: np.isclose(x[1], y1))]
+boundaries = [(1, lambda x: np.isclose(x[1], y0)),
+              (2, lambda x: np.isclose(x[1], y1)),
+              (3, lambda x: np.isclose(x[0], x0)),
+              (4, lambda x: np.isclose(x[0], x1))]
 
 
 ##########Defining functions which actually apply the boundary conditions######
@@ -231,10 +305,12 @@ for marker, func in boundaries:
 		vel_dirichlet_dofs,bc = BoundaryCondition("Open", marker, func, u_ex.sub(1), V.sub(1))
 		dirichlet_conditions.append(bc)
 
-
-
-
-
+'''
+print("Length of solution vector",len(u_n.x.array[:]))
+print("the coordinates of bc for h", h_dirichlet_dofs)
+print("the coordinates of bc for vel", vel_dirichlet_dofs)
+exit(0)
+'''
 
 ###To prepare for time loop, assign the boundary forcing function, u_ex
 #this will compute the tidal elevation at the boundary
@@ -404,12 +480,12 @@ def plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t):
 	xdmf.write_function(vel_plot,t)
 	return 0
 
-print("Length of solution = ",u_n.x.array[:])
+#print("Length of solution = ",u_n.x.array[:])
 plot_global_output(u_n,h_b,V_scalar,V_vel,xdmf,ts)
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params)
+Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain)
 
 
 
@@ -430,6 +506,7 @@ t=ts
 #take first 2 steps with implicit Euler since we dont have enough steps for higher order
 theta1.value=0
 u.x.array[:] = u_n.x.array[:]
+start = time.time()
 for a in range(min(2,nt)):
 	#by default we print out on screen each time step
 	print('Time Step Number',a,'Out of',nt)
@@ -477,7 +554,7 @@ for a in range(2, nt):
 		print("Plotting solution for t = ", str(t/3600.0),"hr")
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
-
+print("time loop takes ", time.time()-start)
 #################################################################################
 #################################################################################
 
@@ -508,10 +585,10 @@ if rank ==0:
 	plt.legend()
 	plt.savefig(f"{filename}_h_station.png")
 	plt.close()
-	plt.plot(t_vec, vals[:,:,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,:,2].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
-	plt.title(f'Velocity in x-direction Over Time')
+	plt.title(f'Velocity in y-direction Over Time')
 	plt.legend()
-	plt.savefig(f"{filename}_ux_station.png")
+	plt.savefig(f"{filename}_uy_station.png")
 
