@@ -6,6 +6,7 @@ import numpy as np
 import numpy.linalg as la
 import time
 from scipy.sparse import csr_matrix
+import matplotlib.pyplot as plt
 
 def petsc_to_csr(A):
     indptr, indices, data = A.getValuesCSR()
@@ -16,7 +17,7 @@ class CustomNewtonProblem:
     """An all-in-one class that solves a nonlinear problem. . .
     """
     
-    def __init__(self,F,u,bc,comm,solver_parameters={},mesh=None):
+    def __init__(self,F,u,bc,comm,solver_parameters={},mesh=None,lines=None):
         """initialize the problem
         
         F -- Ufl weak form
@@ -63,7 +64,7 @@ class CustomNewtonProblem:
         self.solver.setTolerances(rtol=1e-8, atol=1e-9, max_it=1000)
         self.solver.setOperators(self.A)
         if self.pc_type == 'line_smooth':
-            self.pc = LinePreconditioner(self.A, mesh)
+            self.pc = LinePreconditioner(self.A, mesh,lines)
         else:
             self.pc = self.solver.getPC()
             self.pc.setType(self.pc_type)
@@ -89,6 +90,9 @@ class CustomNewtonProblem:
             A.zeroEntries()
             fe.petsc.assemble_matrix(A, self.jacobian, bcs=self.bcs)
             A.assemble()
+            plt.spy(petsc_to_csr(A),markersize=1)
+            plt.savefig("main_mat.png")
+            plt.close()
             fe.petsc.assemble_vector(L, self.residual)
             L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
             L.scale(-1)
@@ -101,7 +105,9 @@ class CustomNewtonProblem:
             # Solve linear problem
             if self.pc_type == 'line_smooth':
                 #print("A cond num", la.cond(petsc_to_csr(A).todense()))
-                new_A, new_rhs = self.pc.precondition(L)
+                #for performance don't compute this
+                #new_A, new_rhs = self.pc.precondition(L)
+                self.pc.precondition(L)
                 #print("new_A cond num", la.cond(petsc_to_csr(new_A).todense()))
                 #solver.reset()
                 #print(solver.getPC().getType())
@@ -113,6 +119,8 @@ class CustomNewtonProblem:
                 solver.setOperators(A, self.pc.mat)
                 start = time.time()
                 solver.solve(L, dx.vector)
+                #unpermute to avoid issues changing matrix
+                self.pc.mat=self.pc.mat.permute(self.pc.Perm,self.pc.Perm)
                 print("solved in ", time.time()-start)
             else:
                 start = time.time()
@@ -149,45 +157,136 @@ class CustomNewtonProblem:
                 break
 class LinePreconditioner:
 
-    def __init__(self, A, mesh):
-        """Initialize the preconditioner from the 
+    def __init__(self, A, mesh,lines):
+        """Initialize the preconditioner 
         """
-
+        self.mesh=mesh
         dim = mesh.topology.dim
         num_cells = mesh.topology.index_map(dim).size_local
         print("local num cells", num_cells)
         #hardcoded for now
-        block_size = 2*A.size[0] // num_cells
-        print("block size", block_size)
+        #a block size is dofs per cell
+        self.block_size = A.size[0] // num_cells
+
+        
+        print("element block size", self.block_size)
+        
         print("Matri size", A.size)
-        self.block_size = block_size
+        #hard code for now, will think about more later
+        self.line_block_size = 2*self.block_size
+        print("line block size",self.line_block_size)
         self.A = A
         mat = PETSc.Mat()
         #set original sparsity pattern
         #will be equal to number of dof per line
-        mat.createAIJ((A.size[0], A.size[0]), nnz=np.full(A.size[0], block_size, dtype=np.int32), comm=mesh.comm)
+
+        #we also know that the preconditioner matrix will be at most block tridiag
+        mat.createAIJ((A.size[0], A.size[0]), nnz=np.full(A.size[0], self.line_block_size, dtype=np.int32), comm=mesh.comm)
         mat.setUp()
-        mat.setBlockSize(block_size)
+        mat.setBlockSize(self.line_block_size)
         self.mat = mat
 
+        #we also build a permutation matrix
+
+        self.Perm = PETSc.IS()
+        self.Perm2 = PETSc.IS()
+        #take in indeces from line by appending all the lines contiguously
+        list1=[]
+        for a in lines:
+            list1+=a
+        list1=np.array(list1,dtype=np.int32)
+        list2=np.argsort(list1).astype(np.int32)
+        print("List of lines", list1)
+        print("Transpose", list2)
+        #this is the forward permutation on LHS
+        self.Perm.createBlock(self.block_size,list1,comm=mesh.comm)
+
+        #this is the inverse permutation on RHS
+        self.Perm2.createBlock(self.block_size,list2,comm=mesh.comm)
+
+
+        #check that it is doing the right thing
+        print(self.Perm.getIndices())
+        print(self.Perm2.getIndices())
+
+
+
+
     def precondition(self, rhs):
-        """Apply the block preconditioner to A and the right hand side
+        """Apply the line smoothing preconditioner to A and the right hand side
 
         returns P^-1 * A, P^-1 * rhs
-        """
+        updates pc mat,
+        this pc mat will be
 
+        Q'B^-1Q
+        """
         old_block_size = self.A.getBlockSize()
+        #print("old blocksize",old_block_size)
+
+        #first get A and permute rows and columns
+        #B=self.A.duplicate(copy=True)
+        #permute but need to change blocksize
+      
+        plt.spy(petsc_to_csr(self.A),markersize=1)
+        plt.savefig("A_before_permutation.png")
+        plt.close()
         self.A.setBlockSize(self.block_size)
-        inv = self.A.invertBlockDiagonal()
+        B=self.A.permute(self.Perm,self.Perm)
         self.A.setBlockSize(old_block_size)
+        plt.spy(petsc_to_csr(B),markersize=1)
+        plt.savefig("A_after_permutation.png")
+        plt.close()
+
+
+        #this is now in right order, but need to truncate rows/cols
+        #will figure this out later
+        #now deal with permuted matrix
+        #B.zeroRowsColumns ?
+        
+
+        
+
+        #fill in entries for mat
+        #eventually we want a block tridiagonal solve efficiently but leave for now
+        B.setBlockSize(self.line_block_size)
+        inv = B.invertBlockDiagonal()
+        #B.setBlockSize(old_block_size)
         start_ind, stop_ind = self.mat.owner_range
-        block_inds = np.arange(start_ind//self.block_size, stop_ind//self.block_size+1)
+        #print(inv.shape,start_ind,stop_ind)
+        block_inds = np.arange(start_ind//self.line_block_size, stop_ind//self.line_block_size+1)
         block_inds = block_inds.astype(np.int32)
+        #print(block_inds)
+        #print(block_inds)
+        #print(inv)
+        #neeed to rewrite this but works for now
+        #mat=PETSc.Mat()
+        #mat.createAIJ((self.A.size[0], self.A.size[0]), nnz=np.full(self.A.size[0], self.line_block_size, dtype=np.int32), comm=self.mesh.comm)
+        #mat.setUp()
+        #mat.setBlockSize(self.line_block_size)
+        self.mat.setBlockSize(self.line_block_size)
         self.mat.setValuesBlockedCSR(block_inds, block_inds[:-1], inv)
-        #for i in range(len(inv)):
-        #    mat.setValuesBlocked(block_inds[i:i+1], block_inds[i:i+1], inv[i])
+
+        self.mat.setBlockSize(self.block_size)
         self.mat.assemble()
-        new_rhs = self.mat.createVecRight()
-        self.mat.mult(rhs, new_rhs)
-        return self.mat.matMult(self.A), new_rhs
+        
+        #plt.spy(petsc_to_csr(self.mat),markersize=1)
+        #plt.savefig("Preconditioner_notpermuted.png")
+        #plt.close()
+
+        self.mat=self.mat.permute(self.Perm2,self.Perm2)
+        #mat.assemble()
+        #self.mat=mat.duplicate(copy=True)
+        B.destroy()
+
+
+        #plt.spy(petsc_to_csr(self.mat),markersize=1)
+        #plt.savefig("Preconditioner.png")
+        #plt.close()
+
+
+        #new_rhs = self.mat.createVecRight()
+        #self.mat.mult(rhs, new_rhs)
+        #return self.mat.matMult(self.A), new_rhs
+        return 0
 

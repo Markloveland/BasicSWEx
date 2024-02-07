@@ -236,10 +236,10 @@ h_b = fe.Function(V.sub(0).collapse()[0])
 h_b.interpolate(lambda x: depth + 0*x[0])
 
 
-#Initial condition assignment
+#Initial condition assignment for up/down flow
 #in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
 #introduce a shock to system to mess with conditioning
-
+'''
 u_n.sub(0).interpolate(
 	fe.Expression(
 		h_b, 
@@ -265,6 +265,39 @@ vel_ex.interpolate(
 			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
 
+'''
+
+#Initial condition assignment for l/r flow
+#in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
+#introduce a shock to system to mess with conditioning
+
+u_n.sub(0).interpolate(
+	fe.Expression(
+		h_b, 
+		V.sub(0).element.interpolation_points()))
+  
+u_n.sub(1).interpolate(
+	fe.Expression(
+		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag-4)),
+			fe.Constant(domain, ScalarType(0.0))]),
+		V.sub(1).element.interpolation_points()))
+
+#also need to input bathymetry to u_ex to store h_b
+h_ex = u_ex.sub(0)
+h_ex.interpolate(
+	fe.Expression(
+		h_b,
+		V.sub(0).element.interpolation_points())
+	)
+vel_ex = u_ex.sub(1)
+vel_ex.interpolate(
+	fe.Expression(
+		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
+			fe.Constant(domain, ScalarType(0.0))]),
+		V.sub(1).element.interpolation_points()))
+
+
+
 
 ################################################################################
 ################################################################################
@@ -276,10 +309,20 @@ vel_ex.interpolate(
 # 3,4 top and bottom sides are no flux condition (U \cdot n = 0)
 # 2 is free outflow condition
 # We can add more numbers for different bc types later
+
+#this ligns flow down to up, matching with cell numbering
+'''
 boundaries = [(1, lambda x: np.isclose(x[1], y0)),
               (2, lambda x: np.isclose(x[1], y1)),
               (3, lambda x: np.isclose(x[0], x0)),
               (4, lambda x: np.isclose(x[0], x1))]
+'''
+
+#this aligns flow left to right, now line numbers don't agree with cell numbering
+boundaries = [(1, lambda x: np.isclose(x[0], x0)),
+              (2, lambda x: np.isclose(x[0], x1)),
+              (3, lambda x: np.isclose(x[1], y0)),
+              (4, lambda x: np.isclose(x[1], y1))]
 
 
 ##########Defining functions which actually apply the boundary conditions######
@@ -484,8 +527,23 @@ def plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t):
 plot_global_output(u_n,h_b,V_scalar,V_vel,xdmf,ts)
 
 #######Initialize a solver object###########
+#create the line smoothing preconditioner, assuming static for now. Later this will need to go inside time loop
+#for now we know this map but later we will create a routine that creates the order of elements in each line
+def find_lines(u,domain):
+	#the solution and domain should be all we need?
+	#this should return a set of lists with each list containing element numbers in each streamline
+
+	#for now it's hard coded, we know that we have 2 lines up/down flow
+	#return [[0,1],[2,3]]
+	#if we have l/r flow
+	return [[0,2],[1,3]]
+
+#call the routine to get set of lists
+lines = find_lines(u,domain)
+
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain)
+#mesh and lines inputs are specifically for line smoothing preconditioner
+Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines)
 
 
 
