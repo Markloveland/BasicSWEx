@@ -33,7 +33,7 @@ relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "line_smooth"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[10000.0,1000.5,0.0]])
+stations = np.array([[1000.5,1000.5,0.0]])
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -44,14 +44,14 @@ stations = np.array([[10000.0,1000.5,0.0]])
 x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
-x1= 10000.0
 y1= 2000.0
+x1= 2000.0
 
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=2#20
-ny=2#5
+nx=20#20
+ny=5#5
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
@@ -60,7 +60,7 @@ vel_boundary_mag = 9.0
 flux_boundary_mag = depth*vel_boundary_mag
 
 #creates dolfinx mesh object partioned via MPI
-domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny],mesh.CellType.quadrilateral)
+#domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny],mesh.CellType.quadrilateral)
 
 #Alternatively, build a mesh and force elements to be same order as streamlines
 #just for proof of concept
@@ -74,7 +74,7 @@ y_coords = np.repeat(y_coords,nx+1)
 coords=np.column_stack([x_coords,y_coords])
 
 #create cell order so that it goes left to right
-nm = np.zeros((nx*ny*2,3))
+nm = np.zeros((nx*ny*2,3),dtype=np.int32)
 cell_no =0
 idx=0
 for a in range(ny):
@@ -92,23 +92,96 @@ for a in range(ny):
 			#skip one at end of column
 			idx+=1
 #print(coords.shape)
-#print(coords)
+print("Orignal nodes and connectivity")
+print(coords)
 #print(nm.shape)
-#print(nm)
+print(nm)
 
 
 
-#gdim, shape, degree = 2, "triangle", 1
-#cell = ufl.Cell(shape, geometric_dimension=gdim)
-#element = ufl.VectorElement("Lagrange", cell, degree)
-#domain = mesh.create_mesh(MPI.COMM_SELF, nm, coords, ufl.Mesh(element))
+gdim, shape, degree = 2, "triangle", 1
+cell = ufl.Cell(shape, geometric_dimension=gdim)
+element = ufl.VectorElement("Lagrange", cell, degree)
+domain = mesh.create_mesh(MPI.COMM_SELF, nm, coords, ufl.Mesh(element))
+
+
+
+#our original streamline direction for left to right flow is 2*the number of elements in x
+#original lines
+lines = np.arange(nx*ny*2).reshape(nx*2,ny,order='F')
+
+
+#need a function that finds map from new element to original element number
+#we know the node mapping through
+#domain.geometry.input_global_indices
+#we need to find matching elements
+#print(domain.geometry.input_global_indices)
+#what happens here
+
+new_2_old = np.argsort(domain.geometry.input_global_indices)
+old_2_new = domain.geometry.input_global_indices
+
+#these are the mappings
+#this gives the old nodes
+print("new nodes and new connectivity")
+print(domain.geometry.x[:])
+print(domain.geometry.dofmap)
+#print("old nodes mapped to new")
+#print(coords[old_2_new,:])
+
+
+
+def find_element_mapping(domain,coord,nm):
+	ncell = nm.shape[0]
+	cell_arr=domain.geometry.dofmap.array[:]
+	#the node mappings
+	old_2_new_node = np.array(domain.geometry.input_global_indices)
+	new_2_old_node = np.argsort(old_2_new_node)
+
+	#loop through dofmap of new elements
+	#and match new element number with old element number
+	#we want the old_2_new cell mapping
+	old_2_new_cell = np.zeros(ncell,dtype=np.int32)
+
+	#get list of new node nums from the new dofmap
+	new_node_num_old_nm = new_2_old_node[nm.flatten()].reshape(nm.shape)
+
+	#to compare, sort each of the element connectivities
+	new_node_num_new_nm = domain.geometry.dofmap.array[:].reshape(nm.shape)
+
+	sort_new_nm = np.sort(new_node_num_new_nm,axis=1)
+
+	#print("new node numbering with old connectivity")
+	sort_old_nm = np.sort(new_node_num_old_nm,axis=1)
+	
+	#use original nm to find old_2_new_cell mapping
+	#print(np.sort(nm,axis=1))
+
+	#find matching entries and store in old_2_new_cell
+	#brute force for now but there is better
+	#algorithms out there
+	for i,old_cell in enumerate(sort_old_nm):
+		#find which new cell number matches
+		for j in range(ncell):
+			if np.array_equal(old_cell,sort_new_nm[j]):
+				#print("old cell",i," matches with new cell",j)
+				old_2_new_cell[i] = j
+	return old_2_new_cell
+
+
+		
+
+#this gives us a map from old cell numbers to new
+old_2_new = find_element_mapping(domain,coords,nm)
+
+
 
 
 '''
 #This seems to reorder everything
 #print(domain.geometry.x)
 # show nodal order--adjusted back to input
-idcs = np.argsort(domain.geometry.input_global_indices)
+
 #print(idcs)
 #print(domain.geometry.x[idcs,:])
 #can we overwrite?
@@ -174,7 +247,7 @@ ts=0.0
 #tf is final time in seconufl.ds
 tf=60*60
 #time step size in seconufl.ds
-dt=60
+dt=10
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -199,7 +272,7 @@ V0 = fe.FunctionSpace(domain, ("Discontinuous Lagrange", 0))
 
 #Centroids of each cell
 DG1_DOFS=V.sub(0).collapse()[0].tabulate_dof_coordinates()
-print(DG1_DOFS)
+#print(DG1_DOFS)
 DG1_V_DOFS=V.sub(0).collapse()[0].tabulate_dof_coordinates()
 
 
@@ -239,6 +312,8 @@ h_b.interpolate(lambda x: depth + 0*x[0])
 #Initial condition assignment for up/down flow
 #in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
 #introduce a shock to system to mess with conditioning
+perturb_vel=0.0
+
 '''
 u_n.sub(0).interpolate(
 	fe.Expression(
@@ -248,7 +323,7 @@ u_n.sub(0).interpolate(
 u_n.sub(1).interpolate(
 	fe.Expression(
 		ufl.as_vector([fe.Constant(domain, ScalarType(0.0)),
-			fe.Constant(domain, ScalarType(vel_boundary_mag-4))]),
+			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
 
 #also need to input bathymetry to u_ex to store h_b
@@ -261,15 +336,17 @@ h_ex.interpolate(
 vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
-		ufl.as_vector([fe.Constant(domain, ScalarType(0.0)),
+		ufl.as_vector([fe.Constant(domain, ScalarType(perturb_vel)),
 			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
 
 '''
-
+#'''
 #Initial condition assignment for l/r flow
 #in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
 #introduce a shock to system to mess with conditioning
+#perturb flow vertically
+
 
 u_n.sub(0).interpolate(
 	fe.Expression(
@@ -278,7 +355,7 @@ u_n.sub(0).interpolate(
   
 u_n.sub(1).interpolate(
 	fe.Expression(
-		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag-4)),
+		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
 			fe.Constant(domain, ScalarType(0.0))]),
 		V.sub(1).element.interpolation_points()))
 
@@ -293,9 +370,9 @@ vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
 		ufl.as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(0.0))]),
+			fe.Constant(domain, ScalarType(perturb_vel))]),
 		V.sub(1).element.interpolation_points()))
-
+#'''
 
 
 
@@ -317,14 +394,14 @@ boundaries = [(1, lambda x: np.isclose(x[1], y0)),
               (3, lambda x: np.isclose(x[0], x0)),
               (4, lambda x: np.isclose(x[0], x1))]
 '''
-
+#'''
 #this aligns flow left to right, now line numbers don't agree with cell numbering
 boundaries = [(1, lambda x: np.isclose(x[0], x0)),
               (2, lambda x: np.isclose(x[0], x1)),
               (3, lambda x: np.isclose(x[1], y0)),
               (4, lambda x: np.isclose(x[1], y1))]
 
-
+#'''
 ##########Defining functions which actually apply the boundary conditions######
 facet_markers, facet_tag = MarkBoundary(domain, boundaries)
 
@@ -484,8 +561,12 @@ theta1 = fe.Constant(domain, ScalarType(theta))
 # this is a generalized version of the BDF2 scheme
 #theta1=0 is 1st order implicit Euler, theta1=1 is 2nd order BDF2
 dQdt = theta1*fe.Constant(domain,ScalarType(1.0/dt))*(1.5*Q - 2*Qn + 0.5*Qn_old) + (1-theta1)*fe.Constant(domain,ScalarType(1.0/dt))*(Q - Qn)
+
 #add to weak form
+#try different form for preconditioner
 F+=ufl.inner(dQdt,p)*ufl.dx
+#Fpre=F-ufl.inner((theta1*fe.Constant(domain,ScalarType(1.0/dt))*( - 2*Qn + 0.5*Qn_old) + (1-theta1)*fe.Constant(domain,ScalarType(1.0/dt))*(- Qn)),p)*ufl.dx
+
 
 
 #Weak form and initial conditions are now arranged, 
@@ -536,14 +617,21 @@ def find_lines(u,domain):
 	#for now it's hard coded, we know that we have 2 lines up/down flow
 	#return [[0,1],[2,3]]
 	#if we have l/r flow
-	return [[0,2],[1,3]]
+	#return [[0,2],[1,3]]
+
+	#assuming l/r then the lines are 2x nx and then use our map to translate
+	return np.arange(nx*ny*2).reshape(ny,nx*2)
 
 #call the routine to get set of lists
 lines = find_lines(u,domain)
+print(lines)
+print("new lines order")
+lines = lines.flatten()[old_2_new].reshape(ny,nx*2)
+print(lines)
 
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
 #mesh and lines inputs are specifically for line smoothing preconditioner
-Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines)
+Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines,Fpre=F)
 
 
 
@@ -589,7 +677,7 @@ for a in range(min(2,nt)):
 		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
 
 #Take remainder of time steps with 2nd order BDF2 scheme
-theta1.value=1
+theta1.value=0
 for a in range(2, nt):
 	print('Time Step Number',a,'Out of',nt)
 	print(a/nt*100,'% Complete')
@@ -643,10 +731,10 @@ if rank ==0:
 	plt.legend()
 	plt.savefig(f"{filename}_h_station.png")
 	plt.close()
-	plt.plot(t_vec, vals[:,:,2].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,:,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
-	plt.title(f'Velocity in y-direction Over Time')
+	plt.title(f'Velocity in x-direction Over Time')
 	plt.legend()
-	plt.savefig(f"{filename}_uy_station.png")
+	plt.savefig(f"{filename}_ux_station.png")
 

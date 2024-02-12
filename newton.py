@@ -17,7 +17,7 @@ class CustomNewtonProblem:
     """An all-in-one class that solves a nonlinear problem. . .
     """
     
-    def __init__(self,F,u,bc,comm,solver_parameters={},mesh=None,lines=None):
+    def __init__(self,F,u,bc,comm,solver_parameters={},mesh=None,lines=None,Fpre=None):
         """initialize the problem
         
         F -- Ufl weak form
@@ -27,6 +27,8 @@ class CustomNewtonProblem:
         """
         self.u = u
         self.F = F
+
+
         self.residual = fe.form(self.F)
 
         self.J = ufl.derivative(self.F, self.u)
@@ -64,10 +66,25 @@ class CustomNewtonProblem:
         self.solver.setTolerances(rtol=1e-8, atol=1e-9, max_it=1000)
         self.solver.setOperators(self.A)
         if self.pc_type == 'line_smooth':
-            self.pc = LinePreconditioner(self.A, mesh,lines)
+            #added for line pre
+            self.F_pre=Fpre
+            self.residual_pre = fe.form(self.F_pre)
+            self.J_pre = ufl.derivative(self.F_pre, self.u)
+            self.jacobian_pre = fe.form(self.J_pre)
+
+            self.A_pre = fe.petsc.create_matrix(self.jacobian_pre)
+            self.L_pre = fe.petsc.create_vector(self.residual_pre)
+
+
+
+
+            self.pc = LinePreconditioner(self.A_pre, mesh,lines)
         else:
             self.pc = self.solver.getPC()
             self.pc.setType(self.pc_type)
+            dim = mesh.topology.dim
+            num_cells = mesh.topology.index_map(dim).size_local
+            self.block_size = self.A.size[0] // num_cells
 
 
     def log(self, *msg):
@@ -82,6 +99,8 @@ class CustomNewtonProblem:
         i = 0
         rank = self.comm.rank
         A, L, solver = self.A, self.L, self.solver
+        if self.pc_type == 'line_smooth':
+            A_pre,L_pre = self.A_pre,self.L_pre
 
         while i < self.max_it:
             # Assemble Jacobian and residual
@@ -107,6 +126,9 @@ class CustomNewtonProblem:
                 #print("A cond num", la.cond(petsc_to_csr(A).todense()))
                 #for performance don't compute this
                 #new_A, new_rhs = self.pc.precondition(L)
+                A_pre.zeroEntries()
+                fe.petsc.assemble_matrix(A_pre, self.jacobian_pre, bcs=self.bcs)
+                A_pre.assemble()
                 self.pc.precondition(L)
                 #print("new_A cond num", la.cond(petsc_to_csr(new_A).todense()))
                 #solver.reset()
@@ -124,8 +146,10 @@ class CustomNewtonProblem:
                 print("solved in ", time.time()-start)
             else:
                 start = time.time()
+
                 #print("pc type", solver.getPC().getType())
                 #print("A cond num", la.cond(petsc_to_csr(A).todense()))
+                #A.setBlockSize(self.block_size)
                 solver.solve(L, dx.vector)
 
                 print("solved in ", time.time()-start)
@@ -173,7 +197,8 @@ class LinePreconditioner:
         
         print("Matri size", A.size)
         #hard code for now, will think about more later
-        self.line_block_size = 2*self.block_size
+        self.line_block_size = lines.shape[1]*self.block_size
+        
         print("line block size",self.line_block_size)
         self.A = A
         mat = PETSc.Mat()
@@ -191,9 +216,11 @@ class LinePreconditioner:
         self.Perm = PETSc.IS()
         self.Perm2 = PETSc.IS()
         #take in indeces from line by appending all the lines contiguously
-        list1=[]
-        for a in lines:
-            list1+=a
+        #list1=[]
+        #for a in lines:
+        #list1+=a
+        list1 = lines.flatten()
+        
         list1=np.array(list1,dtype=np.int32)
         list2=np.argsort(list1).astype(np.int32)
         print("List of lines", list1)
