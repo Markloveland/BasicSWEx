@@ -17,6 +17,7 @@ import ufl
 from petsc4py.PETSc import ScalarType
 from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
+from newton2 import CustomNewtonProblem2
 from auxillaries import init_stations, record_stations, gather_stations
 import matplotlib.pyplot as plt
 #######################################################################
@@ -51,7 +52,7 @@ x1= 2000.0
 #Now define mesh properties
 #number of cells in x and y direction
 nx=20#20
-ny=5#5
+ny=20#5
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
@@ -247,7 +248,7 @@ ts=0.0
 #tf is final time in seconufl.ds
 tf=60*60
 #time step size in seconufl.ds
-dt=10
+dt=60
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -312,7 +313,7 @@ h_b.interpolate(lambda x: depth + 0*x[0])
 #Initial condition assignment for up/down flow
 #in this case, initial condition is h=h_b, vel=(vel_boundary_mag,0)
 #introduce a shock to system to mess with conditioning
-perturb_vel=0.0
+perturb_vel=1.0
 
 '''
 u_n.sub(0).interpolate(
@@ -621,6 +622,8 @@ def find_lines(u,domain):
 
 	#assuming l/r then the lines are 2x nx and then use our map to translate
 	return np.arange(nx*ny*2).reshape(ny,nx*2)
+	#this is u/d orthogonal for comparison
+	#return np.arange(nx*ny*2).reshape(ny,nx*2).T
 
 #call the routine to get set of lists
 lines = find_lines(u,domain)
@@ -631,7 +634,14 @@ print(lines)
 
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
 #mesh and lines inputs are specifically for line smoothing preconditioner
-Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines,Fpre=F)
+
+#standard solver
+#DG FEM -> linearization
+#Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines,Fpre=F)
+
+
+#alternative solver -> linearization -> DG FEM
+Newton_Solver = CustomNewtonProblem2(Fu,Fu_wall,S,dQdt,u,p,n,ds,boundaries,dirichlet_conditions, domain.comm, solver_parameters=params,mesh=domain,lines=lines,Fpre=F)
 
 
 
