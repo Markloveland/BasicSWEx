@@ -447,7 +447,7 @@ for a in range(2, nt):
 #Time loop is complete, any postprocessing may go here
 #060
 if use_vtx:
-	xdmf.close()
+	xmf.close()
 else:
 	#080
 	for writer in writers:
