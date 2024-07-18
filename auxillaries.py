@@ -1,12 +1,24 @@
 from dolfinx import geometry
 import numpy as np
+from dolfinx import __version__
+
 def init_stations(domain,points):
     #reads in recording stations and outputs points on each processor
-    bb_tree = geometry.BoundingBoxTree(domain, domain.topology.dim)
+    try:
+        #060 old version
+        bb_tree = geometry.BoundingBoxTree(domain, domain.topology.dim)
+    except:
+        #080 later versions
+        bb_tree = geometry.bb_tree(domain, domain.topology.dim)
     cells = []
     points_on_proc = []
     # Find cells whose bounding-box collide with the the points
-    cell_candidates = geometry.compute_collisions(bb_tree, points)
+    try:
+        #060
+        cell_candidates = geometry.compute_collisions(bb_tree, points)
+    except:
+        #080
+        cell_candidates = geometry.compute_collisions_points(bb_tree, points)
     # Choose one of the cells that contains the point
     colliding_cells = geometry.compute_colliding_cells(domain, cell_candidates, points)
     for i, point in enumerate(points):

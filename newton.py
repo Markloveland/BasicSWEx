@@ -1,4 +1,5 @@
-from dolfinx import fem as fe, nls, log,geometry,io,cpp
+from dolfinx import fem as fe
+import dolfinx.fem.petsc as petsc
 import ufl
 from mpi4py import MPI
 from petsc4py import PETSc
@@ -52,8 +53,8 @@ class CustomNewtonProblem:
             setattr(self, k, v)
 
 
-        self.A = fe.petsc.create_matrix(self.jacobian)
-        self.L = fe.petsc.create_vector(self.residual)
+        self.A = petsc.create_matrix(self.jacobian)
+        self.L = petsc.create_vector(self.residual)
         self.solver = PETSc.KSP().create(self.comm)
 
         self.solver.setTolerances(rtol=1e-8, atol=1e-9, max_it=1000)
@@ -80,15 +81,15 @@ class CustomNewtonProblem:
             with L.localForm() as loc_L:
                 loc_L.set(0)
             A.zeroEntries()
-            fe.petsc.assemble_matrix(A, self.jacobian, bcs=self.bcs)
+            petsc.assemble_matrix(A, self.jacobian, bcs=self.bcs)
             A.assemble()
-            fe.petsc.assemble_vector(L, self.residual)
+            petsc.assemble_vector(L, self.residual)
             L.ghostUpdate(addv=PETSc.InsertMode.ADD, mode=PETSc.ScatterMode.REVERSE)
             L.scale(-1)
             # Compute b - J(u_D-u_(i-1))
-            fe.petsc.apply_lifting(L, [self.jacobian], [self.bcs], x0=[u.vector], scale=1)
+            petsc.apply_lifting(L, [self.jacobian], [self.bcs], x0=[u.vector], scale=1)
             # Set dx|_bc = u_{i-1}-u_D
-            fe.petsc.set_bc(L, self.bcs, u.vector, 1.0)
+            petsc.set_bc(L, self.bcs, u.vector, 1.0)
             L.ghostUpdate(addv=PETSc.InsertMode.INSERT_VALUES, mode=PETSc.ScatterMode.FORWARD)
 
             # Solve linear problem

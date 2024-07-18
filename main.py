@@ -1,17 +1,39 @@
+from pathlib import Path
 import numpy as np
 from dolfinx import fem as fe, mesh,io
+from dolfinx import __version__
 from mpi4py import MPI
 from ufl import (
-    VectorElement, TestFunction, TrialFunction, FacetNormal, as_matrix,
+    TestFunction, TrialFunction, FacetNormal, as_matrix,
     as_vector, as_tensor, dot, inner, grad, dx, ds, dS,
     jump, avg,sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
-    MixedElement, FiniteElement, TestFunctions, Measure
+    TestFunctions, Measure
 )
+try:
+  from ufl import FiniteElement, VectorElement, MixedElement
+  use_basix=False
+except ImportError:
+  use_basix=True
+  from basix.ufl import element, mixed_element
+try:
+  from dolfinx.fem import functionspace
+except ImportError:
+  from dolfinx.fem import FunctionSpace as functionspace
+
 from petsc4py.PETSc import ScalarType
 from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
 from auxillaries import init_stations, record_stations, gather_stations
 import matplotlib.pyplot as plt
+#store version as 3 integers
+release_no = int(__version__[0])
+version_no = int(__version__[2])
+revision_no = int(__version__[4])
+#plotting functionality depends on version
+if release_no<=0 and version_no<8:
+	use_vtx=False
+else:
+	use_vtx=True
 #######################################################################
 #General user inputs here#
 #Filename for where outputs will go
@@ -68,13 +90,20 @@ p_type = "DG"
 p_degree = [1,1]
 
 # We use mixed elements, these are ufl objects for symbolic math
-el_h   = FiniteElement(p_type, domain.ufl_cell(), degree=p_degree[0])
-el_vel = VectorElement(p_type, domain.ufl_cell(), degree=p_degree[1], dim = 2)
+if not use_basix:
+	#<080
+	el_h   = FiniteElement(p_type, domain.ufl_cell(), degree=p_degree[0])
+	el_vel = VectorElement(p_type, domain.ufl_cell(), degree=p_degree[1], dim = 2)
+	#V will hold the function space info of the mixed elements
+	V = functionspace(domain, MixedElement([el_h, el_vel]))
+else:
+	#>=080
+	el_h   = element(p_type, domain.basix_cell(), degree=p_degree[0])
+	el_vel = element(p_type, domain.basix_cell(), degree=p_degree[1], shape = (2,))
+	V = functionspace(domain, mixed_element([el_h, el_vel]))
 
-
-#V will hold the function space info of the mixed elements
-V = fe.FunctionSpace(domain, MixedElement([el_h, el_vel]))
-
+V_scalar = V.sub(0).collapse()[0]
+V_vel = V.sub(1).collapse()[0]
 #solution variables
 #this will store solution as we march through time
 u = fe.Function(V)
@@ -104,7 +133,7 @@ p = as_vector((p1,p2[0],p2[1]))
 
 #for this problem, assume uniform depth of 10 m
 depth=10.0
-h_b = fe.Function(V.sub(0).collapse()[0])
+h_b = fe.Function(V_scalar)
 #Event though constant still needs to be function of x by convention
 h_b.interpolate(lambda x: depth + 0*x[0])
 
@@ -300,14 +329,8 @@ F+=inner(dQdt,p)*dx
 #Uses FEniCSx to advance time by using Newton-Raphson for each implicit time step
 
 #First let's create plots so we can view initial condition before advancing in time
-xdmf = io.XDMFFile(domain.comm, filename+"/"+filename+".xdmf", "w")
-xdmf.write_mesh(domain)
-
 #initiate some auxillary functions for plotting
 #it is more common to plot surface elevation (eta) rather than depth (h)        
-V_scalar = V.sub(0).collapse()[0]
-V_vel = V.sub(1).collapse()[0]
-
 eta_plot = fe.Function(V_scalar)
 eta_plot.name = "WSE(m)"
 
@@ -315,18 +338,38 @@ eta_plot.name = "WSE(m)"
 vel_plot = fe.Function(V_vel)
 vel_plot.name = "depth averaged velocity (m/s)"
 
-def plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t):
+#060
+if not use_vtx:
+	xmf = io.XDMFFile(domain.comm, filename+"/"+filename+".xdmf", "w")
+	xmf.write_mesh(domain)
+	writers=[]
+else:
+	#080
+	xmf=None
+	results_folder = Path(filename)
+	results_folder.mkdir(exist_ok=True, parents=True)
+	wse_writer = io.VTXWriter(domain.comm, results_folder / "WSE.bp", eta_plot, engine="BP4")
+	vel_writer = io.VTXWriter(domain.comm, results_folder / "vel.bp", vel_plot, engine="BP4")
+	writers=[wse_writer,vel_writer]
+
+def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 	#interpolate and plot water surface elevation and velocity
 	eta_expr = fe.Expression(u.sub(0).collapse() - h_b, V_scalar.element.interpolation_points())
 	eta_plot.interpolate(eta_expr)
 	v_expr = fe.Expression(u.sub(1).collapse(), V_vel.element.interpolation_points())
 	vel_plot.interpolate(v_expr)
-
-	xdmf.write_function(eta_plot,t)
-	xdmf.write_function(vel_plot,t)
+	
+	#060
+	if xdmf!=None:
+		xdmf.write_function(eta_plot,t)
+		xdmf.write_function(vel_plot,t)
+	else:
+		#080
+		for a in vtx_writers:
+			a.write(t)
 	return 0
 
-plot_global_output(u,h_b,V_scalar,V_vel,xdmf,ts)
+
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
@@ -351,6 +394,9 @@ t=ts
 #take first 2 steps with implicit Euler since we dont have enough steps for higher order
 theta1.value=0
 u.x.array[:] = u_n.x.array[:]
+
+#plot initial condition
+plot_global_output(u,h_b,V_scalar,V_vel,ts,xdmf=xmf,vtx_writers=writers)
 for a in range(min(2,nt)):
 	#by default we print out on screen each time step
 	print('Time Step Number',a,'Out of',nt)
@@ -371,7 +417,7 @@ for a in range(min(2,nt)):
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0 and plot_every <= nt:
-		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
+		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
 
 #Take remainder of time steps with 2nd order BDF2 scheme
 theta1.value=1
@@ -392,15 +438,20 @@ for a in range(2, nt):
 	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0:
-		plot_global_output(u,h_b,V_scalar,V_vel,xdmf,t)
+		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
 
 
 #################################################################################
 #################################################################################
 
 #Time loop is complete, any postprocessing may go here
-if plot_every <= nt:
+#060
+if use_vtx:
 	xdmf.close()
+else:
+	#080
+	for writer in writers:
+		writer.close()
 
 #These variables will hold the coordinates and corresponding values of all stations
 coords,vals = gather_stations(0,domain.comm,local_points,station_data)
