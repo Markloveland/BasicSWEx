@@ -9,6 +9,7 @@ from ufl import (
     jump, avg,sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
     TestFunctions, Measure
 )
+
 try:
   from ufl import FiniteElement, VectorElement, MixedElement
   use_basix=False
@@ -49,6 +50,7 @@ params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_param
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
 stations = np.array([[5500.0,1000.5,0.0]])
+wd_alpha = 0.05
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -70,7 +72,6 @@ ny=5
 
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
-
 
 ####################################################################################
 ###################################################################################
@@ -132,10 +133,11 @@ p = as_vector((p1,p2[0],p2[1]))
 #Bathymetry assignment
 
 #for this problem, assume uniform depth of 10 m
-depth=10.0
+depth=100.0
+slope = 2*depth/x1
 h_b = fe.Function(V_scalar)
 #Event though constant still needs to be function of x by convention
-h_b.interpolate(lambda x: depth + 0*x[0])
+h_b.interpolate(lambda x: (depth - slope*x[0]))
 
 
 #Initial condition assignment
@@ -225,12 +227,30 @@ hb_boundary = h_ex.x.array[h_dirichlet_dofs]
 
 #######Establish weak form to solve within time loop########
 
+
+################################################################################
+###############################################################################
+#add in wd_f from Karna
+#this will be added to h_b
+def wd_f(alpha,h):
+	return 0.5*(sqrt(h**2 + alpha*alpha) - h)
+
+
+
+
 #aliasing to make reading easier
 h, ux, uy = u[0], u[1], u[2]
+#get wd function, this will be added anywhere involving h, h_b
+h_wd = h + wd_f(wd_alpha,h)
+h_n_wd = u_n[0] + wd_f(wd_alpha,u_n[0])
+h_n_old_wd =u_n_old[0] + wd_f(wd_alpha,u_n_old[0])
+h_b_wd = h_b + wd_f(wd_alpha,h)
+
 #also shorthand reference for flux variable:
-Q      =   as_vector((u[0], u[1]*u[0], u[2]*u[0] ))
-Qn     =   as_vector((u_n[0], u_n[1]*u_n[0], u_n[2]*u_n[0]))
-Qn_old =   as_vector((u_n_old[0], u_n_old[1]*u_n_old[0], u_n_old[2]*u_n_old[0] )) 
+#this is the modified form now
+Q      =   as_vector((h_wd, u[1], u[2]))
+Qn     =   as_vector((h_n_wd, u_n[1], u_n[2]))
+Qn_old =   as_vector((h_n_old_wd, u_n_old[1], u_n_old[2] )) 
 
 
 #g is gravitational constant
@@ -238,35 +258,32 @@ g=9.81
 
 
 #Flux tensor from SWE
-Fu = as_tensor([[h*ux,h*uy], 
-				[h*ux*ux+ 0.5*g*h*h-0.5*g*h_b*h_b, h*ux*uy],
-				[h*ux*uy,h*uy*uy+0.5*g*h*h-0.5*g*h_b*h_b]
+Fu = as_tensor([[h_wd*ux,h_wd*uy], 
+				[ux*ux + g*(h - h_b), ux*uy],
+				[ux*uy,uy*uy+g*(h-h_b)]
 				])
 
 #Flux tensor for SWE if normal flow is 0
 Fu_wall = as_tensor([[0,0], 
-					[0.5*g*h*h-0.5*g*h_b*h_b, 0],
-					[0,0.5*g*h*h-0.5*g*h_b*h_b]
+					[g*(h-h_b), 0],
+					[0,g*(h-h_b)]
 					])
 
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
 g_vec = as_vector((0,
- 					-g*(h-h_b)*h_b.dx(0),
- 					-g*(h-h_b)*h_b.dx(1)))
+ 					-ux*ux.dx(0) - ux*uy.dx(1),
+ 					-uy*uy.dx(1) - uy*ux.dx(0)))
 #there are many friction laws, here is an example of a quadratic law
 #which matches an operational model ADCIRC
+#Linear friction law or quadratic
 eps=1e-8
-mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, eps, pow(ux*ux + uy*uy, 0.5))
-FFACTOR = 0.0025
-HBREAK = 1.0
-FTHETA = 10.0
-FGAMMA = 1.0/3.0
-Cd = conditional(h>eps, (FFACTOR*(1+HBREAK/h)**FTHETA)**(FGAMMA/FTHETA), eps  )
-fric_vec = as_vector((0,
-					Cd*ux*mag_v,
-					Cd*uy*mag_v))
+cf=0.00025
+mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
+fric_vec=as_vector((0,
+                    ux*cf*mag_v/h_wd,
+                    uy*cf*mag_v/h_wd))
 
 S = g_vec+fric_vec
 
@@ -299,9 +316,9 @@ eps=1e-8
 #attempt at full expression from https://docu.ngsolve.org/v6.2.1810/i-tutorials/unit-3.4-simplehyp/shallow2D.html
 vela =  as_vector((u[1]('+'),u[2]('+')))
 velb =  as_vector((u[1]('-'),u[2]('-')))
-vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),eps)
-vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),eps)
-C = conditional( (vnorma + sqrt(g*u[0]('+'))) > (vnormb + sqrt(g*u[0]('-'))), (vnorma + sqrt(g*u[0]('+'))) ,  (vnormb + sqrt(g*u[0]('-')))) 
+vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),0)
+vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),0)
+C = conditional( (vnorma + sqrt(g*h_wd('+'))) > (vnormb + sqrt(g*h_wd('-'))), (vnorma + sqrt(g*h_wd('+'))) ,  (vnormb + sqrt(g*h_wd('-')))) 
 flux = dot(avg(Fu), n('+')) + 0.5*C*jump(Q)
 
 F += inner(flux, jump(p))*dS
@@ -334,6 +351,8 @@ F+=inner(dQdt,p)*dx
 eta_plot = fe.Function(V_scalar)
 eta_plot.name = "WSE(m)"
 
+h_plot = fe.Function(V_scalar)
+h_plot.name = "depth(m)"
 
 vel_plot = fe.Function(V_vel)
 vel_plot.name = "depth averaged velocity (m/s)"
@@ -349,11 +368,14 @@ else:
 	results_folder = Path(filename)
 	results_folder.mkdir(exist_ok=True, parents=True)
 	wse_writer = io.VTXWriter(domain.comm, results_folder / "WSE.bp", eta_plot, engine="BP4")
+	h_writer = io.VTXWriter(domain.comm, results_folder / "h.bp", h_plot, engine="BP4")
 	vel_writer = io.VTXWriter(domain.comm, results_folder / "vel.bp", vel_plot, engine="BP4")
-	writers=[wse_writer,vel_writer]
+	writers=[wse_writer,h_writer,vel_writer]
 
 def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 	#interpolate and plot water surface elevation and velocity
+	h_expr = fe.Expression(u.sub(0).collapse(), V_scalar.element.interpolation_points())
+	h_plot.interpolate(h_expr)
 	eta_expr = fe.Expression(u.sub(0).collapse() - h_b, V_scalar.element.interpolation_points())
 	eta_plot.interpolate(eta_expr)
 	v_expr = fe.Expression(u.sub(1).collapse(), V_vel.element.interpolation_points())
@@ -446,7 +468,7 @@ for a in range(2, nt):
 
 #Time loop is complete, any postprocessing may go here
 #060
-if use_vtx:
+if not use_vtx:
 	xmf.close()
 else:
 	#080
