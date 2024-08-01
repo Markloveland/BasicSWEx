@@ -22,10 +22,16 @@ conda create -n fenicsx-env
 
 conda activate fenicsx-env
 
-conda install -c conda-forge fenics-dolfinx=0.6.0 mpich pyvista
+conda install -c conda-forge fenics-dolfinx mpich pyvista
 
 Once this is complete, the test case can be ran with:
 
 python3 main.py
 
 this should generate some Paraview output as well as a few .csv files and .png depicting time series of point output
+
+
+For HDG component,  090 is needed but is not available on conda, we can use docker for now
+
+docker pull dolfinx/dolfinx:nightly
+docker run --rm -ti -v $(pwd):/root/shared -w /root/shared  --init -p 8888:8888 dolfinx/dolfinx:nightly

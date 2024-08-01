@@ -133,7 +133,7 @@ p = as_vector((p1,p2[0],p2[1]))
 #Bathymetry assignment
 
 #for this problem, assume uniform depth of 10 m
-depth=100.0
+depth=10.0
 slope = 2*depth/x1
 h_b = fe.Function(V_scalar)
 #Event though constant still needs to be function of x by convention

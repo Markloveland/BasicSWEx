@@ -13,10 +13,12 @@ from ufl import (
 )
 from basix.ufl import element, mixed_element
 from dolfinx.fem import functionspace
+from dolfinx.fem.petsc import LinearProblem
 from petsc4py.PETSc import ScalarType
 from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
-from auxillaries import init_stations, record_stations, gather_stations
+from auxillaries import init_stations, record_stations, gather_stations, get_F, get_LF_flux
+from dolfinx.cpp.mesh import cell_num_entities
 import matplotlib.pyplot as plt
 #store version as 3 integers
 release_no = int(__version__[0])
@@ -87,7 +89,7 @@ dt=60#3600.0
 ####We need to identify function spaces before we can assign initial conditions######
 
 #We will use "DG" elements
-p_type = "CG"
+p_type = "DG"
 #polynomial order of finite element, h is first , (u,v) is second
 p_degree = [1,1]
 
@@ -97,6 +99,8 @@ el_vel = element(p_type, domain.basix_cell(), degree=p_degree[1], shape = (2,))
 V = functionspace(domain, mixed_element([el_h, el_vel]))
 
 V_scalar = V.sub(0).collapse()[0]
+
+
 V_vel = V.sub(1).collapse()[0]
 #solution variables
 #this will store solution as we march through time
@@ -128,22 +132,24 @@ p = as_vector((p1,p2[0],p2[1]))
 index_map = V_scalar.dofmap.index_map
 n_dof_local = index_map.size_local
 n_cell = domain.topology.index_map(2).size_local
-#print(n_cell)
+print(n_cell)
 print(index_map.size_global)
 print(index_map.size_local)
 print(index_map.local_range)
 print(index_map.num_ghosts)
 print(index_map.ghosts)
-#pwner of ghost node
 print(index_map.owners)
+exit(0)
+#pwner of ghost node
+
 
 #this could look like assembler
-for i in range(n_cell):
-	cell_dofs = V_scalar.dofmap.cell_dofs(i)
-	print("local dof #",cell_dofs)
-	print("global dof #")
-	print(index_map.local_to_global(cell_dofs))
-exit(0)
+#for i in range(n_cell):
+#	cell_dofs = V_scalar.dofmap.cell_dofs(i)
+#	print("local dof #",cell_dofs)
+#	print("global dof #")
+#	print(index_map.local_to_global(cell_dofs))
+#exit(0)
 ################################################################################
 ################################################################################
 
@@ -237,6 +243,7 @@ vel_ex.interpolate(
 #use mixed domain to evaluate inter-elemental fluxes
 #try evaulating interelemental fluxes with mixed domain thing
 #requires 080
+ALL_FACETS_TAG = 0
 dim = domain.topology.dim
 facet_dim = dim - 1
 domain.topology.create_entities(facet_dim)
@@ -256,9 +263,79 @@ trace_space = fe.functionspace(facet_mesh, ("DG", 1))
 trace = fe.Function(trace_space)
 trace_n = fe.Function(trace_space)
 
+#get the measure
+num_cells = domain.topology.index_map(dim).size_local
+num_cell_facets = cell_num_entities(domain.topology.cell_type, facet_dim)
+facet_integration_entities = np.zeros((num_cells, num_cell_facets, 2), dtype=int)
+all_facets = [(0, facet_integration_entities.flatten()),(1,facet_integration_entities.flatten())]
+print(all_facets)
+
+ds_c = Measure("dS", subdomain_data=all_facets, domain=domain,subdomain_id=ALL_FACETS_TAG)
+ds_c_2 = Measure("dS", subdomain_data=all_facets, domain=domain,subdomain_id=1)
+
 
 #set up L2 projection to get traces
 #Mass matrix of trace space x flux = DG flux * test from trace *dS
+trial_trace = TrialFunction(trace_space)
+test_trace = TestFunction(trace_space)
+
+'''
+print(dir(domain.topology))
+
+#try computing LF manually?
+domain.topology.create_connectivity(domain.topology.dim-1, domain.topology.dim)
+f_to_c = domain.topology.connectivity(domain.topology.dim-1, domain.topology.dim)
+#need to find nodes too for each facet
+domain.topology.create_connectivity(1, 0)
+f_to_n = domain.topology.connectivity(1, 0)
+#print(f_to_c.links(1))]
+print(f_to_c.array[:])
+
+for i in range(num_facets):
+	cells = f_to_c.links(i)
+	if len(cells)>1:
+		#if it is interior facet, compute DG flux
+		cell1 = cells[0]
+		cell2 = cells[1]
+		#here is all the info we should need
+		#we dont know which dofs are on the edge actually :/
+		nodes=f_to_n.links(i)
+		#now use nodes to get the dofs
+
+exit(0)
+'''
+
+#get fluxes
+u.x.array[:] = u_n.x.array[:]
+n = FacetNormal(domain)
+Fu = get_F(u,h_b)
+LF = get_LF_flux(Fu,u,n)
+
+#set up l2 projection with the DG L-F flux
+
+#project to CG instead for now
+#cg_space = fe.functionspace(domain, ("DG", 1))
+#overwrite
+#trial_trace = TrialFunction(cg_space)
+#test_trace = TestFunction(cg_space)
+
+#just try naive dS for now
+flux_form = LF[0]
+#flux_form = jump(u[0])
+f = fe.form(flux_form*ds_c)
+f2 =fe.form(flux_form*dS)
+print(fe.assemble_scalar(f))
+print(fe.assemble_scalar(f2))
+exit(0)
+
+a = trial_trace*test_trace*ds_c
+L = flux_form*test_trace*ds_c
+problem = LinearProblem(a, L, petsc_options={"ksp_type": "cg"})
+
+ux = problem.solve()
+ux.vector.ghostUpdate()
+print(ux.x.array[:])
+
 
 exit(0)
 
