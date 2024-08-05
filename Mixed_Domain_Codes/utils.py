@@ -9,6 +9,28 @@ import sys
 from dolfinx.cpp.mesh import cell_num_entities
 
 
+def get_F(u,h_b,g=9.81):
+    h, ux, uy = u[0], u[1], u[2]
+    return ufl.as_tensor([[h*ux,h*uy], 
+                [h*ux*ux+ 0.5*g*h*h-0.5*g*h_b*h_b, h*ux*uy],
+                [h*ux*uy,h*uy*uy+0.5*g*h*h-0.5*g*h_b*h_b]
+                ])
+
+
+def get_LF_flux_form(Fu,u,n,vbar,dSplus,dSminus,eps=1e-8,g=9.81):
+    #now adding interior boundary terms using Lax-Friedrichs upwinding for DG
+    #attempt at full expression from https://docu.ngsolve.org/v6.2.1810/i-tutorials/unit-3.4-simplehyp/shallow2D.html
+    vel =  ufl.as_vector((u[1],u[2]))
+    vnorm = ufl.conditional(ufl.sqrt(ufl.dot(vel,vel)) > eps,ufl.sqrt(ufl.dot(vel,vel)),eps)
+    C = vnorm + ufl.sqrt(g*u[0])
+    Q = ufl.as_vector((u[0],u[0]*u[1],u[0]*u[2]))
+    T1 = ufl.dot(Fu, n)
+    T2 = 0.5*C*Q
+    #just L1 norm for now
+    #because normals cancel must flip sign
+    return 0.5*T1[0]*vbar*dSplus - 0.5*T1[0]*vbar*dSminus + T2[0]*vbar*dSplus - T2[0]*vbar*dSminus
+
+
 def par_print(comm, string):
     if comm.rank == 0:
         print(string)
