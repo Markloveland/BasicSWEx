@@ -14,12 +14,16 @@ from ufl import (
 from basix.ufl import element, mixed_element
 from dolfinx.fem import functionspace
 from dolfinx.fem.petsc import LinearProblem
+import dolfinx.fem.petsc as petsc
 from petsc4py.PETSc import ScalarType
 from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
-from auxillaries import init_stations, record_stations, gather_stations, get_F, get_LF_flux
+from auxillaries import (init_stations, record_stations, gather_stations, get_F, get_LF_flux_form,
+compute_cell_boundary_facets, compute_interior_facet_integration_entities, get_interior_facets,
+compute_norm_special)
 from dolfinx.cpp.mesh import cell_num_entities
 import matplotlib.pyplot as plt
+from petsc4py import PETSc
 #store version as 3 integers
 release_no = int(__version__[0])
 version_no = int(__version__[2])
@@ -61,7 +65,7 @@ x1= 2000.0
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=2#20
+nx=2
 ny=2#5
 
 #Propagation velocity entering the left side
@@ -82,9 +86,9 @@ domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 #ts is start time in seconds
 ts=0.0
 #tf is final time in seconds
-tf=60#7*24*60*60
+tf=3600#7*24*60*60
 #time step size in seconds
-dt=60#3600.0
+dt=60.0
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -119,44 +123,13 @@ u_ex = fe.Function(V)
 p1, p2 = TestFunctions(V)
 # object that concatenates all test functions into single variable, like u
 p = as_vector((p1,p2[0],p2[1]))
-
-
-#exploring properties of mixed function space
-#print(V.sub(0).collapse()[0].tabulate_dof_coordinates())
-#exit(0)
-#print(type(V.dofmap.cell_dofs))
-#print(dir(V.dofmap.cell_dofs))
-#print(V.dofmap.cell_dofs(1))
-#exit(0)
-#print(V_scalar.dofmap.cell_dofs(1))
-index_map = V_scalar.dofmap.index_map
-n_dof_local = index_map.size_local
-n_cell = domain.topology.index_map(2).size_local
-print(n_cell)
-print(index_map.size_global)
-print(index_map.size_local)
-print(index_map.local_range)
-print(index_map.num_ghosts)
-print(index_map.ghosts)
-print(index_map.owners)
-exit(0)
-#pwner of ghost node
-
-
-#this could look like assembler
-#for i in range(n_cell):
-#	cell_dofs = V_scalar.dofmap.cell_dofs(i)
-#	print("local dof #",cell_dofs)
-#	print("global dof #")
-#	print(index_map.local_to_global(cell_dofs))
-#exit(0)
 ################################################################################
 ################################################################################
 
 
 #################################################################################
 #################################################################################
-#get a set of lines for preconditioner, this time hard coded
+#get a set of lines for preconditioner, this is hard coded
 #now we can loop trhough cells and get cell_dofs, and establish  lines
 #num var is number of free variables per integration point (h,u,v) for example
 
@@ -240,103 +213,143 @@ vel_ex.interpolate(
 
 ################################################################################
 ################################################################################
+
 #use mixed domain to evaluate inter-elemental fluxes
+#this will then be used to create lines
 #try evaulating interelemental fluxes with mixed domain thing
-#requires 080
-ALL_FACETS_TAG = 0
-dim = domain.topology.dim
-facet_dim = dim - 1
-domain.topology.create_entities(facet_dim)
-facet_imap = domain.topology.index_map(facet_dim)
+#requires version > 090
+# Create a sub-mesh of all facets in the mesh to allow the facet function
+# spaces to be created
+tdim = domain.topology.dim
+fdim = tdim - 1
+num_cell_facets = cell_num_entities(domain.topology.cell_type, fdim)
+#create facet connectivities
+domain.topology.create_entities(fdim)
+#save facet imap
+facet_imap = domain.topology.index_map(fdim)
 num_facets = facet_imap.size_local + facet_imap.num_ghosts
 facets = np.arange(num_facets, dtype=np.int32)
-facet_mesh, entity_map = mesh.create_submesh(domain, facet_dim, facets)[0:2]
-inv_entity_map = np.full_like(entity_map, -1)
-for i, f in enumerate(entity_map):
-	inv_entity_map[f] = i
-entity_maps = {facet_mesh: inv_entity_map}
-inv_entity_map = inv_entity_map
+# NOTE Despite all facets being present in the submesh, the entity map isn't
+# necessarily the identity in parallel
+facet_mesh, facet_mesh_to_msh = mesh.create_submesh(domain, fdim, facets)[0:2]
+msh_to_facet_mesh = np.full(num_facets, -1)
+msh_to_facet_mesh[facet_mesh_to_msh] = np.arange(len(facet_mesh_to_msh))
+#use this to map facets on facet mesh to mother mesh
+entity_maps = {facet_mesh: msh_to_facet_mesh}
+# Create functions spaces
+k_trace = 0  # Polynomial degree
+#DG that lives on mesh skeleton
+Vbar = fe.functionspace(facet_mesh, ("Discontinuous Lagrange", k_trace))
+ubar, vbar = TrialFunction(Vbar), TestFunction(Vbar)
+# Create integration entities and define integration measures. We want
+# to integrate around each element boundary, so we call the following
+# convenience function:
+cell_boundary_facets = compute_cell_boundary_facets(domain)
+cell_imap = domain.topology.index_map(tdim)
+num_cells = cell_imap.size_local + cell_imap.num_ghosts
+#quadruplets usually used for dS
+#doesnt seem to work for now
+all_interior_facets = compute_interior_facet_integration_entities(
+    domain, np.arange(num_cells)
+)
+#plus cells are first two out of every 4
+facet_locs,interior_facets_plus, interior_facets_minus  = get_interior_facets(domain,np.arange(num_cells))
+dS = Measure(
+    "ds",
+    domain=domain,
+    subdomain_data=[
+        (0, interior_facets_plus),
+        (1, interior_facets_minus)
+    ],
+)
+#doesnt seem to work for now
+dS_2 = Measure(
+    "dS",
+    domain=domain,
+    subdomain_data=[
+        (1, all_interior_facets)
+    ],
+)
 
-#do vector functionspace later
-trace_space = fe.functionspace(facet_mesh, ("DG", 1))
-# function to store the current trace (flux)
-trace = fe.Function(trace_space)
-trace_n = fe.Function(trace_space)
-
-#get the measure
-num_cells = domain.topology.index_map(dim).size_local
-num_cell_facets = cell_num_entities(domain.topology.cell_type, facet_dim)
-facet_integration_entities = np.zeros((num_cells, num_cell_facets, 2), dtype=int)
-all_facets = [(0, facet_integration_entities.flatten()),(1,facet_integration_entities.flatten())]
-print(all_facets)
-
-ds_c = Measure("dS", subdomain_data=all_facets, domain=domain,subdomain_id=ALL_FACETS_TAG)
-ds_c_2 = Measure("dS", subdomain_data=all_facets, domain=domain,subdomain_id=1)
+#not sure if we need this measure
+ds_c = Measure("ds", subdomain_data=[(0, cell_boundary_facets)], domain=domain)
+# Create a cell integral measure over the facet mesh
+dx_f = Measure("dx", domain=facet_mesh)
 
 
-#set up L2 projection to get traces
-#Mass matrix of trace space x flux = DG flux * test from trace *dS
-trial_trace = TrialFunction(trace_space)
-test_trace = TestFunction(trace_space)
+#now see if we can construct an integral over each facet to create projection
+A = ubar*vbar*dx_f
+Aform = fe.form(A,entity_maps=entity_maps)
+Amat = petsc.assemble_matrix(Aform)
+Amat.assemble()
+#nrow,ncol = Amat.getSize()
+#print(Amat.getValues(range(nrow),range(ncol)))
 
-'''
-print(dir(domain.topology))
+#always restrict to positive, instead switch with 0 and +
 
-#try computing LF manually?
-domain.topology.create_connectivity(domain.topology.dim-1, domain.topology.dim)
-f_to_c = domain.topology.connectivity(domain.topology.dim-1, domain.topology.dim)
-#need to find nodes too for each facet
-domain.topology.create_connectivity(1, 0)
-f_to_n = domain.topology.connectivity(1, 0)
-#print(f_to_c.links(1))]
-print(f_to_c.array[:])
+#L = f*vbar*dS(0) + f*vbar*dS(1)
 
-for i in range(num_facets):
-	cells = f_to_c.links(i)
-	if len(cells)>1:
-		#if it is interior facet, compute DG flux
-		cell1 = cells[0]
-		cell2 = cells[1]
-		#here is all the info we should need
-		#we dont know which dofs are on the edge actually :/
-		nodes=f_to_n.links(i)
-		#now use nodes to get the dofs
-
-exit(0)
-'''
-
-#get fluxes
-u.x.array[:] = u_n.x.array[:]
+#only way to do conditional is to integrate and then take max vector
+#there is error in C but good enough most likely
 n = FacetNormal(domain)
-Fu = get_F(u,h_b)
-LF = get_LF_flux(Fu,u,n)
+#this will be actual solution, but we already assigned initial condition so use this for now
+Fu = get_F(u_n,h_b)
+#do one equation at a time and then take some sort of norm
+ndof_trace = Vbar.dofmap.index_map.size_local + Vbar.dofmap.index_map.num_ghosts
+#will store solution of projection for each equation
+facet_temp = np.array((ndof_trace,3))
 
-#set up l2 projection with the DG L-F flux
-
-#project to CG instead for now
-#cg_space = fe.functionspace(domain, ("DG", 1))
-#overwrite
-#trial_trace = TrialFunction(cg_space)
-#test_trace = TestFunction(cg_space)
-
-#just try naive dS for now
-flux_form = LF[0]
-#flux_form = jump(u[0])
-f = fe.form(flux_form*ds_c)
-f2 =fe.form(flux_form*dS)
-print(fe.assemble_scalar(f))
-print(fe.assemble_scalar(f2))
-exit(0)
-
-a = trial_trace*test_trace*ds_c
-L = flux_form*test_trace*ds_c
-problem = LinearProblem(a, L, petsc_options={"ksp_type": "cg"})
-
-ux = problem.solve()
-ux.vector.ghostUpdate()
-print(ux.x.array[:])
+L_continuity = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),0)
+L_momentum_x = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),1)
+L_momentum_y = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),2)
+#proof of concept
+#f=fe.Function(V_scalar)
+#f.interpolate(lambda x: 1*(x[0]>-100))
+#sample_flux = as_vector((f,0))
+#average is actually subtracted because n is flipping signs
+#L = 0.5*dot(sample_flux, n)*vbar*dS(0) - 0.5*dot(sample_flux, n)*vbar*dS(1)
+#maybe the - restriction is what works for some reason? doesnt look like it works
+#L = dot(avg(sample_flux),n('+'))*vbar('+')*dS_2(1)
 
 
+Lform_continuity = fe.form(L_continuity,entity_maps=entity_maps)
+Lform_momemntum_x = fe.form(L_momentum_x,entity_maps=entity_maps)
+Lform_momemntum_y = fe.form(L_momentum_y,entity_maps=entity_maps)
+
+#assemble and store
+Lvec_continuity = petsc.assemble_vector(Lform_continuity)
+Lvec_momentum_x = petsc.assemble_vector(Lform_momemntum_x)
+Lvec_momentum_y = petsc.assemble_vector(Lform_momemntum_y)
+
+Lvec_continuity.assemble()
+Lvec_momentum_x.assemble()
+Lvec_momentum_y.assemble()
+
+#create one solver
+ksp = PETSc.KSP().create(domain.comm)
+ksp.setOperators(Amat)
+ksp.setType("preonly")
+ksp.getPC().setType("lu")
+# Compute solution
+x_con = Amat.createVecRight()
+x_momx = Amat.createVecRight()
+x_momy = Amat.createVecRight()
+#solve
+ksp.solve(Lvec_continuity, x_con)
+ksp.solve(Lvec_momentum_x, x_momx)
+ksp.solve(Lvec_momentum_y, x_momy)
+
+
+nrow = Lvec_continuity.getSize()
+print("L2 interpolation to facets continuity",x_con.array)
+print("L2 interpolation to facets mom-x",x_momx.array)
+print("L2 interpolation to facets mom-y",x_momy.array)
+
+#compute the norm between the arrays
+facet_flux = compute_norm_special(x_con.array,x_momx.array,x_momy.array,np.inf)
+print(facet_flux)
+with io.VTXWriter(domain.comm, "u.bp", h_b, "bp4") as f:
+    f.write(0.0)
 exit(0)
 
 ################################################################################
