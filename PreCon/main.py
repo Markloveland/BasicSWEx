@@ -65,8 +65,8 @@ x1= 2000.0
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=2
-ny=2#5
+nx=10
+ny=5#5
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
@@ -299,9 +299,9 @@ ndof_trace = Vbar.dofmap.index_map.size_local + Vbar.dofmap.index_map.num_ghosts
 #will store solution of projection for each equation
 facet_temp = np.array((ndof_trace,3))
 
-L_continuity = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),0)
-L_momentum_x = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),1)
-L_momentum_y = get_LF_flux_form(Fu,u,n,vbar,dS(0),dS(1),2)
+L_continuity = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),0)
+L_momentum_x = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),1)
+L_momentum_y = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),2)
 #proof of concept
 #f=fe.Function(V_scalar)
 #f.interpolate(lambda x: 1*(x[0]>-100))
@@ -350,6 +350,90 @@ facet_flux = compute_norm_special(x_con.array,x_momx.array,x_momy.array,np.inf)
 print(facet_flux)
 with io.VTXWriter(domain.comm, "u.bp", h_b, "bp4") as f:
     f.write(0.0)
+
+#find the lines and return
+def get_cell_pairs(domain,facet_flux,fdim,tdim,tol=1e-5):
+	#first get indices of nonzero fluxes
+	f_mask = np.where(facet_flux>tol)[0]
+	f_to_c = domain.topology.connectivity(fdim, tdim)
+
+	cell_dat = []
+	#iterate through facets and keep track of cells
+	for i in f_mask:
+		cell_dat.append(f_to_c.links(i))
+	return np.array(cell_dat)
+
+def get_lines(cell_pairs,ncells):
+	#simple algorithm
+	#takes in list of cell pairs and returns sets of lines
+	print("forming lines")
+	temp_cell_pairs = np.empty_like(cell_pairs)
+	cell_pairs.sort()
+	temp_cell_pairs[:] = cell_pairs
+	#remaining_ind = np.arange(ncells)
+	ctr = 0
+	lines = []
+	ncell_count = 0
+	nline = 0
+	while (len(temp_cell_pairs)!=0):
+		ctr=0
+		#initialize current line, remove from array
+		current_line = [temp_cell_pairs[ctr,0],temp_cell_pairs[ctr,1]]
+		current_pair = temp_cell_pairs[ctr]
+		temp_cell_pairs = np.delete(temp_cell_pairs,ctr,axis=0)
+		if(len(temp_cell_pairs)==0):
+			break
+		#check intersections of remaining facets, add it if nonempty
+		linecomplete=True
+
+		
+		while(linecomplete):
+			check_pair = temp_cell_pairs[ctr]
+			#for a in remaining_pairs:
+			if np.intersect1d(current_pair,check_pair).size>0:
+				#pair found, update lines
+				current_line.append(check_pair[0])
+				current_line.append(check_pair[1])
+				#remove pair from list
+				temp_cell_pairs = np.delete(temp_cell_pairs,ctr,axis=0)
+				if(len(temp_cell_pairs)==0):
+					tmp = np.unique(current_line)
+					ncell_count+=tmp.size
+					lines.append(tmp)
+					nline+=1
+					linecomplete=False
+				#move update current pair and start over
+				current_pair = check_pair
+				ctr = 0
+
+			else:
+				ctr+=1
+				if ctr == len(temp_cell_pairs):
+					#append this to lines, eliminate repeats
+					tmp = np.unique(current_line)
+					ncell_count+=tmp.size
+					lines.append(tmp)
+					current_line = []
+					linecomplete=False
+					nline+=1
+
+	#if all cells aren't included, append to end cell by cell
+	if ncell_count != num_cells:
+		print("WARNING, not all cells strongly connected")
+		#find missing cell numbers and append ...
+		#will add this later
+	else:
+		print("All cells in a line")
+	return lines
+	
+
+
+cell_pairs = get_cell_pairs(domain,facet_flux,fdim,tdim)
+lines = get_lines(cell_pairs,num_cells)
+print(lines)
+
+DG0 = fe.functionspace(domain, ("DG", 0))
+print(DG0.tabulate_dof_coordinates())
 exit(0)
 
 ################################################################################
