@@ -23,6 +23,7 @@ compute_cell_boundary_facets, compute_interior_facet_integration_entities, get_i
 compute_norm_special)
 from dolfinx.cpp.mesh import cell_num_entities
 import matplotlib.pyplot as plt
+import matplotlib.tri as tri
 from petsc4py import PETSc
 #store version as 3 integers
 release_no = int(__version__[0])
@@ -59,14 +60,14 @@ x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
 #Coordinate of top right corner
-y1= 2000.0
-x1= 2000.0
+y1= 1000.0
+x1= 1000.0
 
 
 #Now define mesh properties
 #number of cells in x and y direction
 nx=10
-ny=5#5
+ny=10#5
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
@@ -191,7 +192,7 @@ u_n.sub(0).interpolate(
 u_n.sub(1).interpolate(
 	fe.Expression(
 		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(0.0))]),
+			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
 
 #also need to input bathymetry to u_ex to store h_b
@@ -205,7 +206,7 @@ vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
 		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(perturb_vel))]),
+			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
 		V.sub(1).element.interpolation_points()))
 
 ################################################################################
@@ -253,13 +254,14 @@ all_interior_facets = compute_interior_facet_integration_entities(
     domain, np.arange(num_cells)
 )
 #plus cells are first two out of every 4
-facet_locs,interior_facets_plus, interior_facets_minus  = get_interior_facets(domain,np.arange(num_cells))
+facet_locs,interior_facets_plus, interior_facets_minus, exterior_facets  = get_interior_facets(domain,np.arange(num_cells))
 dS = Measure(
     "ds",
     domain=domain,
     subdomain_data=[
         (0, interior_facets_plus),
-        (1, interior_facets_minus)
+        (1, interior_facets_minus),
+        (2, exterior_facets)
     ],
 )
 #doesnt seem to work for now
@@ -270,9 +272,13 @@ dS_2 = Measure(
         (1, all_interior_facets)
     ],
 )
+#regular boundary
+
 
 #not sure if we need this measure
-ds_c = Measure("ds", subdomain_data=[(0, cell_boundary_facets)], domain=domain)
+cell_boundaries=1
+#all cell boundaries
+ds_c = Measure("ds", subdomain_data=[(cell_boundaries, cell_boundary_facets)], domain=domain)
 # Create a cell integral measure over the facet mesh
 dx_f = Measure("dx", domain=facet_mesh)
 
@@ -299,9 +305,9 @@ ndof_trace = Vbar.dofmap.index_map.size_local + Vbar.dofmap.index_map.num_ghosts
 #will store solution of projection for each equation
 facet_temp = np.array((ndof_trace,3))
 
-L_continuity = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),0)
-L_momentum_x = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),1)
-L_momentum_y = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1),2)
+L_continuity = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),0)
+L_momentum_x = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),1)
+L_momentum_y = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),2)
 #proof of concept
 #f=fe.Function(V_scalar)
 #f.interpolate(lambda x: 1*(x[0]>-100))
@@ -351,8 +357,8 @@ print(facet_flux)
 with io.VTXWriter(domain.comm, "u.bp", h_b, "bp4") as f:
     f.write(0.0)
 
-#find the lines and return
-def get_cell_pairs(domain,facet_flux,fdim,tdim,tol=1e-5):
+#this routine finds cell pairs that are linked above a certain threshold
+def get_cell_pairs(domain,facet_flux,fdim,tdim,tol=1e-2):
 	#first get indices of nonzero fluxes
 	f_mask = np.where(facet_flux>tol)[0]
 	f_to_c = domain.topology.connectivity(fdim, tdim)
@@ -363,6 +369,9 @@ def get_cell_pairs(domain,facet_flux,fdim,tdim,tol=1e-5):
 		cell_dat.append(f_to_c.links(i))
 	return np.array(cell_dat)
 
+
+
+#this one doesnt really work
 def get_lines(cell_pairs,ncells):
 	#simple algorithm
 	#takes in list of cell pairs and returns sets of lines
@@ -425,17 +434,122 @@ def get_lines(cell_pairs,ncells):
 	else:
 		print("All cells in a line")
 	return lines
-	
+
+def MakePath(elem_no, c_to_f, f_to_c, f_flux, line,boundary_facets):
+	#for element number, pick face with highest connectivity
+	facet_nos = c_to_f.links(elem_no)
+	facet_fluxes = f_flux[facet_nos]
+	#pick facets that with highest 2 connectivities
+	temp = facet_nos[np.argsort(facet_fluxes)]
+	max_facs = temp[-2:]
+	#check if facet is boundary facet
+	#i dont think we want to terminate here
+	#if np.isin(max_facs[-1],boundary_facets):
+	#	print("HIT BOUNDARY FACET")
+	#	print(facet_fluxes)
+	#try highest cell first
+	cell_nos = f_to_c.links(max_facs[-1])
+	#see what cell nos are not already in line
+	new_cell = np.setdiff1d(cell_nos, line)
+	#if new cell is empty then notihng gets added to path
+	if len(new_cell) !=0:
+		k = new_cell[0]
+		line.append(k)
+	else:
+		#search for second highest one
+		cell_nos = f_to_c.links(max_facs[-2])
+		#see what cell nos are not already in line
+		new_cell = np.setdiff1d(cell_nos, line)
+		if len(new_cell) !=0:
+			k = new_cell[0]
+			line.append(k)
+		else:
+			#terminate path
+			k=-1
+	return line,k
+#from dissertation
+def LineCreation(seed_element,c_to_f, f_to_c, flux,boundary_facets):
+	line = [seed_element]
+	k =seed_element
+	while k!=-1:
+		print(k)
+		line,k_new = MakePath(k, c_to_f, f_to_c, flux,  line,boundary_facets)
+		k=k_new
+	return line
+
+def GenerateLines(cells,c_to_f,f_to_c,flux,boundary_facets):
+	lines = []
+	while cells.size>0:
+		seed_element = cells[0]
+		line = LineCreation(seed_element,c_to_f, f_to_c, flux,boundary_facets)
+		#remove all cells from this list
+		mask = np.isin(cells, line, invert=True)
+		cells = cells[mask]
+		#append line to lines
+		lines.append(line)
+	return lines
 
 
-cell_pairs = get_cell_pairs(domain,facet_flux,fdim,tdim)
-lines = get_lines(cell_pairs,num_cells)
+
+boundary_facets = mesh.exterior_facet_indices(domain.topology)
+#try making a line with one seed element and see what happens
+f_to_c = domain.topology.connectivity(fdim, tdim)
+c_to_f = domain.topology.connectivity(tdim, fdim)
+cells = np.arange(num_cells)
+lines = GenerateLines(cells,c_to_f,f_to_c,facet_flux,boundary_facets)
 print(lines)
+print(cells)
+
+#exit(0)
+'''
+print(f_to_c.array[:])
+print(f_to_c.links(2))
+print(f_to_c.num_nodes)
+print(f_to_c.offsets)
+print(c_to_f.num_nodes)
+print(c_to_f.offsets)
+print(num_facets)
+print(num_cells)
+exit(0)
+'''
+#cell_pairs = get_cell_pairs(domain,facet_flux,fdim,tdim)
+#lines = get_lines(cell_pairs,num_cells)
+#print(lines)
+#boundary facet numbers 
+
+#print(boundary_facets)
 
 DG0 = fe.functionspace(domain, ("DG", 0))
-print(DG0.tabulate_dof_coordinates())
-exit(0)
+cell_centroids = DG0.tabulate_dof_coordinates()
+print("FIRST CENTROID", cell_centroids[0])
 
+
+#######################################
+# Plot Lines of initial condition
+#lets see if we can visualize lines somehow
+nds = domain.geometry.x
+ei = domain.geometry.dofmap
+tris = tri.Triangulation(nds[:,0], nds[:,1], triangles=ei)
+#assign mat
+mat = np.zeros(ei.shape[0])
+nline = 0
+for a,line in enumerate(lines):
+	mat[line] = a+1
+	nline+=1
+fig = plt.figure(figsize=(18, 12),facecolor=(1, 1, 1))
+plt.tripcolor(tris, facecolors=mat, edgecolors='k',cmap=plt.cm.get_cmap('rainbow', nline),linewidth=1)
+cbar = plt.colorbar(ticks=np.arange(np.min(mat), np.max(mat) + 1))
+cbar.ax.tick_params(labelsize=20)
+plt.xlabel('x',fontsize=20)
+plt.ylabel('y',fontsize=20)
+plt.title("Material Plot",fontsize=20)
+
+#also plot arrows of each line
+for a,line in enumerate(lines):
+	plt.plot(cell_centroids[line,0],cell_centroids[line,1])
+
+plt.savefig("Lines.png")
+exit(0)
 ################################################################################
 ################################################################################
 

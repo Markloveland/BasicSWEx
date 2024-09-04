@@ -64,7 +64,7 @@ def get_F(u,h_b,g=9.81):
                 [h*ux*uy,h*uy*uy+0.5*g*h*h-0.5*g*h_b*h_b]
                 ])
 
-def get_LF_flux_form(Fu,u,n,vbar,dSplus,dSminus,eq_no,eps=1e-8,g=9.81):
+def get_LF_flux_form(Fu,u,n,vbar,dSplus,dSminus,dSext,eq_no,eps=1e-8,g=9.81):
     #now adding interior boundary terms using Lax-Friedrichs upwinding for DG
     #attempt at full expression from https://docu.ngsolve.org/v6.2.1810/i-tutorials/unit-3.4-simplehyp/shallow2D.html
     vel =  as_vector((u[1],u[2]))
@@ -75,7 +75,7 @@ def get_LF_flux_form(Fu,u,n,vbar,dSplus,dSminus,eq_no,eps=1e-8,g=9.81):
     T2 = 0.5*C*Q
     #just L1 norm for now
     #because normals cancel must flip sign
-    return 0.5*T1[eq_no]*vbar*dSplus - 0.5*T1[eq_no]*vbar*dSminus + T2[eq_no]*vbar*dSplus - T2[eq_no]*vbar*dSminus
+    return 0.5*T1[eq_no]*vbar*dSplus - 0.5*T1[eq_no]*vbar*dSminus + T2[eq_no]*vbar*dSplus - T2[eq_no]*vbar*dSminus +T1[eq_no]*vbar*dSext
 
 def compute_cell_boundary_facets(msh):
     """Compute the integration entities for integrals around the
@@ -155,6 +155,7 @@ def get_interior_facets(msh,cell_map):
     f_to_c = msh.topology.connectivity(fdim, tdim)
     facet_plus = []
     facet_minus = []
+    facet_boundary = []
     facets = []
     for facet in range(msh.topology.index_map(fdim).size_local):
         cells = f_to_c.links(facet)
@@ -180,7 +181,17 @@ def get_interior_facets(msh,cell_map):
                     facet
                 ]
                 )
-    return facets,facet_plus, facet_minus
+        else:
+            local_facet_plus = c_to_f.links(cells[0]).tolist().index(facet)
+            facet_boundary.extend(
+                [
+                    cell_map[cells[0]],
+                    local_facet_plus,
+                ]
+                )
+
+
+    return facets,facet_plus, facet_minus, facet_boundary
 
 
 #compute the norm between the arrays
