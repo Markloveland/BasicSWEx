@@ -45,7 +45,7 @@ rel_tol=1e-5
 abs_tol=1e-6
 max_iter=10
 relax_param=1
-params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
+params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "line_smooth"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
 stations = np.array([[1000.5,1000.5,0.0]])
@@ -60,8 +60,8 @@ x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
 #Coordinate of top right corner
-y1= 1000.0
-x1= 1000.0
+y1= 2000.0
+x1= 2000.0
 
 
 #Now define mesh properties
@@ -127,48 +127,6 @@ p = as_vector((p1,p2[0],p2[1]))
 ################################################################################
 ################################################################################
 
-
-#################################################################################
-#################################################################################
-#get a set of lines for preconditioner, this is hard coded
-#now we can loop trhough cells and get cell_dofs, and establish  lines
-#num var is number of free variables per integration point (h,u,v) for example
-
-#get the cell numbers in l/r lines
-#needs nlines as an argument and y0 y1, assumes equispaced cells
-def get_lr_lines(domain,nlines,y0,y1):
-	#get number of elements and cell dofs, this will determine mapping to lines
-	num_cells = domain.topology.index_map(domain.topology.dim).size_local
-	#we assume each line has equal number of cells
-	cells_per_line = num_cells//nlines
-	lines = np.zeros((nlines,cells_per_line),dtype=np.int32)
-	line_spacing = (y1-y0)/nlines
-	#loop through cells and compare coordinates
-	#since we want to match up lr, want to match cells with y coordinates
-	#will adopt up to down
-	ctr = np.zeros(nlines,dtype=np.int32)
-	for a in range(num_cells):
-		#the node numbers on a cell
-		node_nos = domain.geometry.dofmap[a]
-		#coordinates of nodes in the cell
-		y_coords =domain.geometry.x[node_nos][:,1]
-		#remove redundant coordinates and center of cell
-		cell_ctr = np.mean(np.unique(y_coords))
-		line_no = int((cell_ctr-line_spacing/2)//line_spacing)
-		lines[line_no,ctr[line_no]]=a
-		ctr[line_no]+=1
-	return lines
-
-
-
-
-
-lines = get_lr_lines(domain,ny,y0,y1)
-print("cell no. contained in each line", lines)
-
-#################################################################
-###############################################################
-
 ####Assigning bathymetry and initial conditions#########
 ##Note that fenicsx can handle bathymetry from different function space
 #But we will keep same for now
@@ -192,7 +150,7 @@ u_n.sub(0).interpolate(
 u_n.sub(1).interpolate(
 	fe.Expression(
 		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
+			fe.Constant(domain, ScalarType(0.0))]),
 		V.sub(1).element.interpolation_points()))
 
 #also need to input bathymetry to u_ex to store h_b
@@ -206,7 +164,7 @@ vel_ex = u_ex.sub(1)
 vel_ex.interpolate(
 	fe.Expression(
 		as_vector([fe.Constant(domain, ScalarType(vel_boundary_mag)),
-			fe.Constant(domain, ScalarType(vel_boundary_mag))]),
+			fe.Constant(domain, ScalarType(perturb_vel))]),
 		V.sub(1).element.interpolation_points()))
 
 ################################################################################
@@ -214,6 +172,7 @@ vel_ex.interpolate(
 
 ################################################################################
 ################################################################################
+#Initialize Line Preconditioner
 
 #use mixed domain to evaluate inter-elemental fluxes
 #this will then be used to create lines
@@ -248,14 +207,9 @@ ubar, vbar = TrialFunction(Vbar), TestFunction(Vbar)
 cell_boundary_facets = compute_cell_boundary_facets(domain)
 cell_imap = domain.topology.index_map(tdim)
 num_cells = cell_imap.size_local + cell_imap.num_ghosts
-#quadruplets usually used for dS
-#doesnt seem to work for now
-all_interior_facets = compute_interior_facet_integration_entities(
-    domain, np.arange(num_cells)
-)
-#plus cells are first two out of every 4
+#retruns facets in three different arrays
 facet_locs,interior_facets_plus, interior_facets_minus, exterior_facets  = get_interior_facets(domain,np.arange(num_cells))
-dS = Measure(
+dS_pre = Measure(
     "ds",
     domain=domain,
     subdomain_data=[
@@ -264,65 +218,40 @@ dS = Measure(
         (2, exterior_facets)
     ],
 )
-#doesnt seem to work for now
-dS_2 = Measure(
-    "dS",
-    domain=domain,
-    subdomain_data=[
-        (1, all_interior_facets)
-    ],
-)
-#regular boundary
 
 
-#not sure if we need this measure
-cell_boundaries=1
-#all cell boundaries
-ds_c = Measure("ds", subdomain_data=[(cell_boundaries, cell_boundary_facets)], domain=domain)
-# Create a cell integral measure over the facet mesh
+
+# Create a cell integral measure over the facet mesh for L2 projection
 dx_f = Measure("dx", domain=facet_mesh)
 
 
+#Perform an L2 projection for each entry
 #now see if we can construct an integral over each facet to create projection
 A = ubar*vbar*dx_f
 Aform = fe.form(A,entity_maps=entity_maps)
 Amat = petsc.assemble_matrix(Aform)
 Amat.assemble()
-#nrow,ncol = Amat.getSize()
-#print(Amat.getValues(range(nrow),range(ncol)))
+
 
 #always restrict to positive, instead switch with 0 and +
-
-#L = f*vbar*dS(0) + f*vbar*dS(1)
-
 #only way to do conditional is to integrate and then take max vector
 #there is error in C but good enough most likely
 n = FacetNormal(domain)
 #this will be actual solution, but we already assigned initial condition so use this for now
-Fu = get_F(u_n,h_b)
+Fu_pre = get_F(u_n,h_b)
 #do one equation at a time and then take some sort of norm
 ndof_trace = Vbar.dofmap.index_map.size_local + Vbar.dofmap.index_map.num_ghosts
-#will store solution of projection for each equation
-facet_temp = np.array((ndof_trace,3))
 
-L_continuity = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),0)
-L_momentum_x = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),1)
-L_momentum_y = get_LF_flux_form(Fu,u_n,n,vbar,dS(0),dS(1), dS(2),2)
-#proof of concept
-#f=fe.Function(V_scalar)
-#f.interpolate(lambda x: 1*(x[0]>-100))
-#sample_flux = as_vector((f,0))
-#average is actually subtracted because n is flipping signs
-#L = 0.5*dot(sample_flux, n)*vbar*dS(0) - 0.5*dot(sample_flux, n)*vbar*dS(1)
-#maybe the - restriction is what works for some reason? doesnt look like it works
-#L = dot(avg(sample_flux),n('+'))*vbar('+')*dS_2(1)
-
-
+#ufl forms for each equation
+L_continuity = get_LF_flux_form(Fu_pre,u_n,n,vbar,dS_pre(0),dS_pre(1), dS_pre(2),0)
+L_momentum_x = get_LF_flux_form(Fu_pre,u_n,n,vbar,dS_pre(0),dS_pre(1), dS_pre(2),1)
+L_momentum_y = get_LF_flux_form(Fu_pre,u_n,n,vbar,dS_pre(0),dS_pre(1), dS_pre(2),2)
+#turn into aseemblable forms
 Lform_continuity = fe.form(L_continuity,entity_maps=entity_maps)
 Lform_momemntum_x = fe.form(L_momentum_x,entity_maps=entity_maps)
 Lform_momemntum_y = fe.form(L_momentum_y,entity_maps=entity_maps)
 
-#assemble and store
+#assemble and store in vectors
 Lvec_continuity = petsc.assemble_vector(Lform_continuity)
 Lvec_momentum_x = petsc.assemble_vector(Lform_momemntum_x)
 Lvec_momentum_y = petsc.assemble_vector(Lform_momemntum_y)
@@ -331,7 +260,7 @@ Lvec_continuity.assemble()
 Lvec_momentum_x.assemble()
 Lvec_momentum_y.assemble()
 
-#create one solver
+#create one solver for L2 Projection
 ksp = PETSc.KSP().create(domain.comm)
 ksp.setOperators(Amat)
 ksp.setType("preonly")
@@ -353,9 +282,10 @@ print("L2 interpolation to facets mom-y",x_momy.array)
 
 #compute the norm between the arrays
 facet_flux = compute_norm_special(x_con.array,x_momx.array,x_momy.array,np.inf)
-print(facet_flux)
-with io.VTXWriter(domain.comm, "u.bp", h_b, "bp4") as f:
-    f.write(0.0)
+
+#plots stuff
+#with io.VTXWriter(domain.comm, "u.bp", h_b, "bp4") as f:
+#    f.write(0.0)
 
 #this routine finds cell pairs that are linked above a certain threshold
 def get_cell_pairs(domain,facet_flux,fdim,tdim,tol=1e-2):
@@ -497,31 +427,11 @@ f_to_c = domain.topology.connectivity(fdim, tdim)
 c_to_f = domain.topology.connectivity(tdim, fdim)
 cells = np.arange(num_cells)
 lines = GenerateLines(cells,c_to_f,f_to_c,facet_flux,boundary_facets)
-print(lines)
-print(cells)
-
-#exit(0)
-'''
-print(f_to_c.array[:])
-print(f_to_c.links(2))
-print(f_to_c.num_nodes)
-print(f_to_c.offsets)
-print(c_to_f.num_nodes)
-print(c_to_f.offsets)
-print(num_facets)
-print(num_cells)
-exit(0)
-'''
-#cell_pairs = get_cell_pairs(domain,facet_flux,fdim,tdim)
-#lines = get_lines(cell_pairs,num_cells)
-#print(lines)
-#boundary facet numbers 
-
-#print(boundary_facets)
-
 DG0 = fe.functionspace(domain, ("DG", 0))
 cell_centroids = DG0.tabulate_dof_coordinates()
-print("FIRST CENTROID", cell_centroids[0])
+#print("FIRST CENTROID", cell_centroids[0])
+lines = np.array(lines)
+
 
 
 #######################################
@@ -534,7 +444,7 @@ tris = tri.Triangulation(nds[:,0], nds[:,1], triangles=ei)
 mat = np.zeros(ei.shape[0])
 nline = 0
 for a,line in enumerate(lines):
-	mat[line] = a+1
+	mat[line] = a
 	nline+=1
 fig = plt.figure(figsize=(18, 12),facecolor=(1, 1, 1))
 plt.tripcolor(tris, facecolors=mat, edgecolors='k',cmap=plt.cm.get_cmap('rainbow', nline),linewidth=1)
@@ -549,7 +459,7 @@ for a,line in enumerate(lines):
 	plt.plot(cell_centroids[line,0],cell_centroids[line,1])
 
 plt.savefig("Lines.png")
-exit(0)
+
 ################################################################################
 ################################################################################
 
@@ -757,7 +667,7 @@ def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params)
+Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,lines=lines,mesh=domain)
 
 
 
