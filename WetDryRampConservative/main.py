@@ -40,13 +40,13 @@ else:
 #Filename for where outputs will go
 filename='TidalPropagation'
 #global output for every "plot_every" time steps
-plot_every=1
+plot_every=60
 #any user defined solver paramters
 rel_tol=1e-5
 abs_tol=1e-6
 max_iter=10
 relax_param=1
-params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
+params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "ilu"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
 stations = np.array([[13750.0,1000.5,0.0]])
@@ -80,7 +80,7 @@ ts=0.0
 #tf is final time in seconds
 tf=7*24*60*60
 #time step size in seconds
-dt=600
+dt=100
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -255,7 +255,8 @@ h_n_old_wd =u_n_old[0] + wd_f(wd_alpha,u_n_old[0])
 h_b_wd = h_b + wd_f(wd_alpha,h)
 h_ex_wd = h_ex + wd_f(wd_alpha,h_ex)
 h_b_ex_wd = h_b + wd_f(wd_alpha,h_ex)
-
+eta = h-h_b
+eta_ex = h_ex_wd - h_b_ex_wd
 
 
 
@@ -271,29 +272,47 @@ g=9.81
 
 
 #Flux tensor from SWE
+'''
 Fu = as_tensor([[h_wd*ux,h_wd*uy], 
 				[h_wd*ux*ux + 0.5*g*h_wd*h_wd-0.5*g*h_b_wd*h_b_wd, h_wd*ux*uy],
 				[h_wd*ux*uy,h_wd*uy*uy+0.5*g*h_wd*h_wd-0.5*g*h_b_wd*h_b_wd]
 				])
+'''			
+#try miinimizing h_wd apperances
+Fu = as_tensor([[h_wd*ux,h_wd*uy], 
+				[h_wd*ux*ux + 0.5*g*(eta*eta + 2*eta*h_b_wd), h_wd*ux*uy],
+				[h_wd*ux*uy,h_wd*uy*uy+0.5*g*(eta*eta + 2*eta*h_b_wd)]
+				])
 
 #Flux tensor for SWE if normal flow is 0
+'''
 Fu_wall = as_tensor([[0,0], 
 					[0.5*g*h_wd*h_wd-0.5*g*h_b_wd*h_b_wd, 0],
 					[0,0.5*g*h_wd*h_wd-0.5*g*h_b_wd*h_b_wd]
 					])
+'''
+Fu_wall = as_tensor([[0,0], 
+					[0.5*g*(eta*eta + 2*eta*h_b_wd), 0],
+					[0,0.5*g*(eta*eta + 2*eta*h_b_wd)]
+					])
 
 #Open
-Fu_open = as_tensor([[h_ex*ux,h_ex*uy], 
+'''
+Fu_open = as_tensor([[h_ex_wd*ux,h_ex_wd*uy], 
 				[h_ex_wd*ux*ux + 0.5*g*h_ex_wd*h_ex_wd-0.5*g*h_b_ex_wd*h_b_ex_wd, h_ex_wd*ux*uy],
 				[h_ex_wd*ux*uy,h_ex_wd*uy*uy+0.5*g*h_ex_wd*h_ex_wd-0.5*g*h_b_ex_wd*h_b_ex_wd]
 				])
-
+'''
+Fu_open = as_tensor([[h_ex_wd*ux,h_ex_wd*uy], 
+				[h_ex_wd*ux*ux + 0.5*g*(eta_ex*eta_ex + 2*eta_ex*h_b_ex_wd), h_ex_wd*ux*uy],
+				[h_ex_wd*ux*uy,h_ex_wd*uy*uy+ 0.5*g*(eta_ex*eta_ex + 2*eta_ex*h_b_ex_wd)]
+				])
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
 g_vec = as_vector((0,
- 					-g*(h-h_b)*h_b_wd.dx(0),
- 					-g*(h-h_b)*h_b_wd.dx(1)))
+ 					-g*(eta)*h_b_wd.dx(0),
+ 					-g*(eta)*h_b_wd.dx(1)))
 #there are many friction laws, here is an example of a quadratic law
 #which matches an operational model ADCIRC
 #Linear friction law or quadratic
@@ -301,8 +320,8 @@ eps=1e-8
 cf=0.02
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
 fric_vec=as_vector((0,
-                    ux*cf*cf*g*mag_v/(h_wd**(4/3)),
-                    uy*cf*cf*g*mag_v/(h_wd**(4/3))))
+                    ux*cf*cf*g*mag_v/(h_wd**(1/3)),
+                    uy*cf*cf*g*mag_v/(h_wd**(1/3))))
 
 S = g_vec+fric_vec
 

@@ -26,11 +26,11 @@ def init_stations(domain,points):
             points_on_proc.append(point)
             cells.append(colliding_cells.links(i)[0])
     return cells,np.array(points_on_proc, dtype=np.float64)
-def record_stations(u_sol,points_on_proc,cells):
+def record_stations(u_sol,h_b,f_wd,points_on_proc,cells):
     #saves time series at stations into a numpy array
     #u_values = u_sol.eval(points_on_proc, self.cells)
     #fix for mixed
-    h_values = u_sol.sub(0).eval(points_on_proc, cells)
+    h_values = u_sol.sub(0).eval(points_on_proc, cells) - 2*h_b.eval(points_on_proc, cells) + f_wd.eval(points_on_proc,cells)
     u_values = u_sol.sub(1).eval(points_on_proc, cells)
     u_values = np.hstack([h_values,u_values])
     return u_values

@@ -49,8 +49,8 @@ relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[5500.0,1000.5,0.0]])
-wd_alpha = 0.05
+stations = np.array([[13750.0,1000.5,0.0]])
+wd_alpha = 0.36
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -61,14 +61,15 @@ wd_alpha = 0.05
 x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
-x1= 10000.0
-y1= 2000.0
+x1= 13800
+y1= 7200
 
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=20
-ny=5
+nx=12
+ny=6
+
 
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
@@ -81,7 +82,7 @@ ts=0.0
 #tf is final time in seconds
 tf=7*24*60*60
 #time step size in seconds
-dt=3600.0
+dt=600.0  #3600 works too
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -133,11 +134,17 @@ p = as_vector((p1,p2[0],p2[1]))
 #Bathymetry assignment
 
 #for this problem, assume uniform depth of 10 m
-depth=10.0
-slope = 2*depth/x1
+depth=5.0
+slope = 0.1#2*depth/x1
 h_b = fe.Function(V_scalar)
 #Event though constant still needs to be function of x by convention
 h_b.interpolate(lambda x: (depth - slope*x[0]))
+
+h_b = fe.Function(V.sub(0).collapse()[0])
+shoreline_x = x1
+print("shoreline located")
+h_b.interpolate(lambda x: depth/shoreline_x * (shoreline_x - x[0]))#depth/shoreline_x * (shoreline_x - x[0]) +
+f_wd = fe.Function(V.sub(0).collapse()[0])
 
 
 #Initial condition assignment
@@ -155,6 +162,7 @@ u_n.sub(1).interpolate(
 
 #also need to input bathymetry to u_ex to store h_b
 h_ex = u_ex.sub(0)
+uu_ex = u_ex.sub(1)
 h_ex.interpolate(
 	fe.Expression(
 		h_b,
@@ -171,7 +179,7 @@ h_ex.interpolate(
 # 2 are all other sides and are no flux condition (U \cdot n = 0)
 # We can add more numbers for different bc types later
 boundaries = [(1, lambda x: np.isclose(x[0], 0)),
-              (2, lambda x: np.logical_not(np.isclose(x[0],0 )) | np.isclose(x[1],y1) |  np.isclose(x[1],y0))]
+              (2, lambda x: np.isclose(x[0], x1) | np.isclose(x[1],y1) |  np.isclose(x[1],y0))]
 
 
 ##########Defining functions which actually apply the boundary conditions######
@@ -204,10 +212,12 @@ for marker, func in boundaries:
 #this will compute the tidal elevation at the boundary
 def evaluate_tidal_boundary(t):
 	#hard coded parameters for mag and frequency
-	alpha = 0.00014051891708
-	mag = 0.15
-	return mag*np.cos(t*alpha)
+	alpha = np.pi*2.0/(60*60*24.0)
+	mag = 2.0*np.tanh(t/(60*60*24))
+	return mag*np.sin(t*alpha)
 
+def zero_vel_boundary(t):
+	return 0
 
 #A function which will update the dirichlet bc inside the time loop
 def update_boundary(t,hb):
@@ -221,7 +231,6 @@ def update_boundary(t,hb):
 #define h_b at boundary of dof so we don't need to repeat in time loop
 #hb_boundary is a vector that will not change through time
 hb_boundary = h_ex.x.array[h_dirichlet_dofs]
-
 ################################################################################
 ################################################################################
 
@@ -245,6 +254,8 @@ h_wd = h + wd_f(wd_alpha,h)
 h_n_wd = u_n[0] + wd_f(wd_alpha,u_n[0])
 h_n_old_wd =u_n_old[0] + wd_f(wd_alpha,u_n_old[0])
 h_b_wd = h_b + wd_f(wd_alpha,h)
+h_ex_wd = h_ex + wd_f(wd_alpha,h_ex)
+h_b_ex_wd = h_b + wd_f(wd_alpha,h_ex)
 
 #also shorthand reference for flux variable:
 #this is the modified form now
@@ -256,7 +267,7 @@ Qn_old =   as_vector((h_n_old_wd, u_n_old[1], u_n_old[2] ))
 #g is gravitational constant
 g=9.81
 
-
+#Method 1
 #Flux tensor from SWE
 Fu = as_tensor([[h_wd*ux,h_wd*uy], 
 				[ux*ux + g*(h - h_b), ux*uy],
@@ -269,28 +280,56 @@ Fu_wall = as_tensor([[0,0],
 					[0,g*(h-h_b)]
 					])
 
+#Open
+Fu_open = as_tensor([[h_ex_wd*ux,h_ex_wd*uy], 
+				[ux*ux + g*(h_ex - h_b), ux*uy],
+				[ux*uy,uy*uy+g*(h_ex-h_b)]
+				])
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
 g_vec = as_vector((0,
- 					-ux*ux.dx(0) - ux*uy.dx(1),
- 					-uy*uy.dx(1) - uy*ux.dx(0)))
+ 					-ux*ux.dx(0)-ux*uy.dx(1),
+ 					-uy*uy.dx(1)-uy*ux.dx(0)))
+'''
+#Method 2, doesnt work as well
+#Flux tensor from SWE
+Fu = as_tensor([[h_wd*ux,h_wd*uy], 
+				[ux*ux + g*h_wd, ux*uy],
+				[ux*uy,uy*uy+g*h_wd]
+				])
+#for whatever reason this seems to behave better with walls
+#Flux tensor for SWE if normal flow is 0
+Fu_wall = as_tensor([[0,0], 
+					[g*h_wd, 0],
+					[0,g*h_wd]
+					])
+
+#RHS source vector for SWE is gravity + bottom friction
+#can add in things like wind and pressure later
+g_vec = as_vector((0,
+ 					-ux*ux.dx(0) - ux*uy.dx(1) - g*h_b_wd.dx(0) ,
+ 					-uy*uy.dx(1) - uy*ux.dx(0) - g*h_b_wd.dx(1)))
+
+'''
 #there are many friction laws, here is an example of a quadratic law
 #which matches an operational model ADCIRC
 #Linear friction law or quadratic
 eps=1e-8
-cf=0.00025
+cf=0.02
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
 fric_vec=as_vector((0,
-                    ux*cf*mag_v/h_wd,
-                    uy*cf*mag_v/h_wd))
+                    g*ux*cf*cf*mag_v/(h_wd**(4/3)),
+                    g*uy*cf*cf*mag_v/(h_wd**(4/3))))
 
 S = g_vec+fric_vec
 
 
-
 #normal vector
 n = FacetNormal(domain)
+
+#add a stabilization term
+#Stabilization_term = inner( dot(avg(as_vector((ux*p[1], ux*p[2]))),n('+')), jump(ux) )*dS
 
 
 
@@ -300,13 +339,15 @@ n = FacetNormal(domain)
 F = -inner(Fu,grad(p))*dx
 #add RHS forcing
 F += inner(S,p)*dx
+#add stabilization term
+#F+=Stabilization_term
 
 
 #now adding in global boundary terms
 for marker, func in boundaries:
 	if marker == 1:
 		#This is the open boundary in this case
-		F += dot(dot(Fu, n), p) * ds(marker)
+		F += dot(dot(Fu_open, n), p) * ds(marker)
 	elif marker == 2:
 		#this is the wall condition, no flux on this part
 		F += dot(dot(Fu_wall, n), p)*ds(marker)
@@ -395,7 +436,7 @@ def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,h_dirichlet_conditions, domain.comm, solver_parameters=params)
+Newton_Solver = CustomNewtonProblem(F,u,[], domain.comm, solver_parameters=params)
 
 
 
@@ -408,8 +449,7 @@ nt=int(np.ceil((tf-ts)/dt))
 local_cells,local_points = init_stations(domain,stations)
 station_data = np.zeros((nt+1,local_points.shape[0],3))
 #record initial data
-station_data[0,:,:] = record_stations(u_n,local_points,local_cells)
-
+station_data[0,:,:] = record_stations(u_n,f_wd,h_b,local_points,local_cells)
 #time begins at ts
 t=ts
 
@@ -436,7 +476,9 @@ for a in range(min(2,nt)):
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
-	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
+	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
+	f_wd.interpolate(f_wd_expr)
+	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0 and plot_every <= nt:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
@@ -457,7 +499,9 @@ for a in range(2, nt):
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
-	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
+	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
+	f_wd.interpolate(f_wd_expr)
+	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
