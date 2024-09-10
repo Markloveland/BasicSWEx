@@ -49,8 +49,8 @@ relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[5500.0,1000.5,0.0]])
-wd_alpha = 5.0
+stations = np.array([[13750.0,1000.5,0.0]])
+wd_alpha = 0.36
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -61,15 +61,14 @@ wd_alpha = 5.0
 x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
-x1= 10000.0
-y1= 2000.0
+x1= 13800
+y1= 7200
 
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=20
-ny=5
-
+nx=12
+ny=6
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 
@@ -81,7 +80,7 @@ ts=0.0
 #tf is final time in seconds
 tf=7*24*60*60
 #time step size in seconds
-dt=3600.0
+dt=600
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -133,11 +132,17 @@ p = as_vector((p1,p2[0],p2[1]))
 #Bathymetry assignment
 
 #for this problem, assume uniform depth of 10 m
-depth=10.0
-slope = 2*depth/x1
+depth=5.0
+slope = 0.1#2*depth/x1
 h_b = fe.Function(V_scalar)
 #Event though constant still needs to be function of x by convention
 h_b.interpolate(lambda x: (depth - slope*x[0]))
+
+h_b = fe.Function(V.sub(0).collapse()[0])
+f_wd = fe.Function(V.sub(0).collapse()[0])
+shoreline_x = x1
+print("shoreline located")
+h_b.interpolate(lambda x: depth/shoreline_x * (shoreline_x - x[0]))
 
 
 #Initial condition assignment
@@ -161,6 +166,7 @@ h_ex.interpolate(
 		V.sub(0).element.interpolation_points())
 	)
 
+
 ################################################################################
 ################################################################################
 
@@ -171,7 +177,7 @@ h_ex.interpolate(
 # 2 are all other sides and are no flux condition (U \cdot n = 0)
 # We can add more numbers for different bc types later
 boundaries = [(1, lambda x: np.isclose(x[0], 0)),
-              (2, lambda x: np.logical_not(np.isclose(x[0],0 )) | np.isclose(x[1],y1) |  np.isclose(x[1],y0))]
+              (2, lambda x: np.isclose(x[0],x1 ) | np.isclose(x[1],y1) |  np.isclose(x[1],y0))]
 
 
 ##########Defining functions which actually apply the boundary conditions######
@@ -181,6 +187,9 @@ ds = Measure("ds", domain=domain, subdomain_data=facet_tag)
 
 
 ##########Dirchlet Boundary conditions###################
+#maybe these don't work so well, try weak enforcement
+
+
 # Define the boundary conditions and pass them to the solver
 h_dirichlet_conditions = []
 #For now these will be empty but in general may want to allow for dirichlet u,v
@@ -204,9 +213,9 @@ for marker, func in boundaries:
 #this will compute the tidal elevation at the boundary
 def evaluate_tidal_boundary(t):
 	#hard coded parameters for mag and frequency
-	alpha = 0.00014051891708
-	mag = 0.15
-	return mag*np.cos(t*alpha)
+	alpha = 2*np.pi/(60*60*24)
+	mag = 2.0*np.tanh(t/(60*60*24))
+	return mag*np.sin(t*alpha)
 
 
 #A function which will update the dirichlet bc inside the time loop
@@ -221,7 +230,6 @@ def update_boundary(t,hb):
 #define h_b at boundary of dof so we don't need to repeat in time loop
 #hb_boundary is a vector that will not change through time
 hb_boundary = h_ex.x.array[h_dirichlet_dofs]
-
 ################################################################################
 ################################################################################
 
@@ -245,6 +253,11 @@ h_wd = h + wd_f(wd_alpha,h)
 h_n_wd = u_n[0] + wd_f(wd_alpha,u_n[0])
 h_n_old_wd =u_n_old[0] + wd_f(wd_alpha,u_n_old[0])
 h_b_wd = h_b + wd_f(wd_alpha,h)
+h_ex_wd = h_ex + wd_f(wd_alpha,h_ex)
+h_b_ex_wd = h_b + wd_f(wd_alpha,h_ex)
+
+
+
 
 #also shorthand reference for flux variable:
 #this is the modified form now
@@ -269,6 +282,12 @@ Fu_wall = as_tensor([[0,0],
 					[0,0.5*g*h_wd*h_wd-0.5*g*h_b_wd*h_b_wd]
 					])
 
+#Open
+Fu_open = as_tensor([[h_ex*ux,h_ex*uy], 
+				[h_ex_wd*ux*ux + 0.5*g*h_ex_wd*h_ex_wd-0.5*g*h_b_ex_wd*h_b_ex_wd, h_ex_wd*ux*uy],
+				[h_ex_wd*ux*uy,h_ex_wd*uy*uy+0.5*g*h_ex_wd*h_ex_wd-0.5*g*h_b_ex_wd*h_b_ex_wd]
+				])
+
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
@@ -279,11 +298,11 @@ g_vec = as_vector((0,
 #which matches an operational model ADCIRC
 #Linear friction law or quadratic
 eps=1e-8
-cf=0.00025
+cf=0.02
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
 fric_vec=as_vector((0,
-                    ux*cf*mag_v,
-                    uy*cf*mag_v))
+                    ux*cf*cf*g*mag_v/(h_wd**(4/3)),
+                    uy*cf*cf*g*mag_v/(h_wd**(4/3))))
 
 S = g_vec+fric_vec
 
@@ -306,7 +325,8 @@ F += inner(S,p)*dx
 for marker, func in boundaries:
 	if marker == 1:
 		#This is the open boundary in this case
-		F += dot(dot(Fu, n), p) * ds(marker)
+		F += dot(dot(Fu_open, n), p) * ds(marker)
+		#F -=  dot(dot(Fu, n), p) * ds(marker)
 	elif marker == 2:
 		#this is the wall condition, no flux on this part
 		F += dot(dot(Fu_wall, n), p)*ds(marker)
@@ -395,7 +415,7 @@ def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
-Newton_Solver = CustomNewtonProblem(F,u,h_dirichlet_conditions, domain.comm, solver_parameters=params)
+Newton_Solver = CustomNewtonProblem(F,u,[], domain.comm, solver_parameters=params)
 
 
 
@@ -408,7 +428,7 @@ nt=int(np.ceil((tf-ts)/dt))
 local_cells,local_points = init_stations(domain,stations)
 station_data = np.zeros((nt+1,local_points.shape[0],3))
 #record initial data
-station_data[0,:,:] = record_stations(u_n,local_points,local_cells)
+station_data[0,:,:] = record_stations(u_n,f_wd,h_b,local_points,local_cells)
 
 #time begins at ts
 t=ts
@@ -436,7 +456,9 @@ for a in range(min(2,nt)):
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
-	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
+	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
+	f_wd.interpolate(f_wd_expr)
+	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0 and plot_every <= nt:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
@@ -457,7 +479,10 @@ for a in range(2, nt):
 	#solve associated NewtonProblem
 	Newton_Solver.solve(u)
 	#add data to station variable
-	station_data[a+1,:,:] = record_stations(u,local_points,local_cells)
+	#add data to station variable
+	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
+	f_wd.interpolate(f_wd_expr)
+	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
