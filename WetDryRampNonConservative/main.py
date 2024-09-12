@@ -7,7 +7,7 @@ from ufl import (
     TestFunction, TrialFunction, FacetNormal, as_matrix,
     as_vector, as_tensor, dot, inner, grad, dx, ds, dS,
     jump, avg,sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
-    TestFunctions, Measure
+    TestFunctions, Measure, tanh
 )
 
 try:
@@ -49,7 +49,22 @@ relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[13750.0,1000.5,0.0]])
+stations = np.array([[0.0, 3650.0, 0.0],
+ [1000.0, 3650.0, 0.0],
+ [2000.0, 3650.0, 0.0],
+ [3000.0, 3650.0, 0.0],
+ [4000.0, 3650.0, 0.0],
+ [5000.0, 3650.0, 0.0],
+ [6000.0, 3650.0, 0.0],
+ [7000.0, 3650.0, 0.0],
+ [8000.0, 3650.0, 0.0],
+ [9000.0, 3650.0, 0.0],
+ [10000.0, 3650.0, 0.0],
+ [11000.0, 3650.0, 0.0],
+ [12000.0, 3650.0, 0.0],
+ [13000.0, 3650.0, 0.0],
+ [13500.0, 3650.0, 0.0],
+ [13800.0, 3650.0, 0.0]])
 wd_alpha = 0.36
 ########################################################################
 ########################################################################
@@ -212,9 +227,10 @@ for marker, func in boundaries:
 #this will compute the tidal elevation at the boundary
 def evaluate_tidal_boundary(t):
 	#hard coded parameters for mag and frequency
-	alpha = np.pi*2.0/(60*60*24.0)
+	alpha = np.pi*2.0/(60*60*12.0)
 	mag = 2.0*np.tanh(t/(60*60*24))
-	return mag*np.sin(t*alpha)
+	phase = 90*np.pi/180
+	return mag*np.cos(t*alpha - phase)
 
 def zero_vel_boundary(t):
 	return 0
@@ -359,7 +375,19 @@ vela =  as_vector((u[1]('+'),u[2]('+')))
 velb =  as_vector((u[1]('-'),u[2]('-')))
 vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),0)
 vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),0)
+#C = conditional( (vnorma + sqrt(g*h_wd('+'))) > (vnormb + sqrt(g*h_wd('-'))), (vnorma + sqrt(g*h_wd('+'))) ,  (vnormb + sqrt(g*h_wd('-')))) 
 C = conditional( (vnorma + sqrt(g*h_wd('+'))) > (vnormb + sqrt(g*h_wd('-'))), (vnorma + sqrt(g*h_wd('+'))) ,  (vnormb + sqrt(g*h_wd('-')))) 
+'''
+#replace conditional with smoothiside-max
+def smoothiside_max(vnorma,vnormb,h_wd,g=9.81,k=20):
+	x = vnorma + sqrt(g*h_wd('+')) - ( vnormb + sqrt(g*h_wd('-')) ) 
+	s1 = (0.5+0.5*tanh(k*x))
+	s2 = (0.5+0.5*tanh(-k*x))
+	return s1*(vnorma + sqrt(g*h_wd('+'))) + s2*( vnormb + sqrt(g*h_wd('-')) )
+
+C = smoothiside_max(vnorma,vnormb,h_wd,g=9.81,k=5)
+'''
+
 flux = dot(avg(Fu), n('+')) + 0.5*C*jump(Q)
 
 F += inner(flux, jump(p))*dS
@@ -449,7 +477,7 @@ nt=int(np.ceil((tf-ts)/dt))
 local_cells,local_points = init_stations(domain,stations)
 station_data = np.zeros((nt+1,local_points.shape[0],3))
 #record initial data
-station_data[0,:,:] = record_stations(u_n,f_wd,h_b,local_points,local_cells)
+station_data[0,:,:] = 0.0# record_stations(u_n,f_wd,h_b,local_points,local_cells)
 #time begins at ts
 t=ts
 
@@ -534,7 +562,7 @@ if rank ==0:
 	np.savetxt(f"{filename}_stations_h.csv", vals[:,:,0], delimiter=",")
 	np.savetxt(f"{filename}_stations_xvel.csv", vals[:,:,1], delimiter=",")
 	np.savetxt(f"{filename}_stations_yvel.csv", vals[:,:,2], delimiter=",")
-	plt.plot(t_vec, vals[:,:,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,0,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.ylabel('surface elevation(m)')
@@ -542,7 +570,7 @@ if rank ==0:
 	plt.legend()
 	plt.savefig(f"{filename}_h_station.png")
 	plt.close()
-	plt.plot(t_vec, vals[:,:,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,0,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.title(f'Velocity in x-direction Over Time')

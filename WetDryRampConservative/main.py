@@ -7,7 +7,7 @@ from ufl import (
     TestFunction, TrialFunction, FacetNormal, as_matrix,
     as_vector, as_tensor, dot, inner, grad, dx, ds, dS,
     jump, avg,sqrt,conditional,gt,div,nabla_div,tr,diag,sign,elem_mult,
-    TestFunctions, Measure
+    TestFunctions, Measure, tanh
 )
 
 try:
@@ -46,10 +46,25 @@ rel_tol=1e-5
 abs_tol=1e-6
 max_iter=10
 relax_param=1
-params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "ilu"}
+params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "bjacobi"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[13750.0,1000.5,0.0]])
+stations = np.array([[0.0, 3650.0, 0.0],\
+ [1000.0, 3650.0, 0.0],\
+ [2000.0, 3650.0, 0.0],\
+ [3000.0, 3650.0, 0.0],\
+ [4000.0, 3650.0, 0.0],\
+ [5000.0, 3650.0, 0.0],\
+ [6000.0, 3650.0, 0.0],\
+ [7000.0, 3650.0, 0.0],\
+ [8000.0, 3650.0, 0.0],\
+ [9000.0, 3650.0, 0.0],\
+ [10000.0, 3650.0, 0.0],\
+ [11000.0, 3650.0, 0.0],\
+ [12000.0, 3650.0, 0.0],\
+ [13000.0, 3650.0, 0.0],\
+ [13500.0, 3650.0, 0.0],\
+ [13800.0, 3650.0, 0.0]])
 wd_alpha = 0.36
 ########################################################################
 ########################################################################
@@ -213,9 +228,10 @@ for marker, func in boundaries:
 #this will compute the tidal elevation at the boundary
 def evaluate_tidal_boundary(t):
 	#hard coded parameters for mag and frequency
-	alpha = 2*np.pi/(60*60*24)
+	alpha = 2*np.pi/(60*60*12)
 	mag = 2.0*np.tanh(t/(60*60*24))
-	return mag*np.sin(t*alpha)
+	phase = 90*np.pi/180
+	return mag*np.cos(t*alpha-phase)
 
 
 #A function which will update the dirichlet bc inside the time loop
@@ -318,6 +334,9 @@ g_vec = as_vector((0,
 #Linear friction law or quadratic
 eps=1e-8
 cf=0.02
+#try to avoid big jump
+#mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, (ux*ux+uy*uy)/eps, pow(ux*ux + uy*uy, 0.5))
+#doesnt seem to make big difference
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
 fric_vec=as_vector((0,
                     ux*cf*cf*g*mag_v/(h_wd**(1/3)),
@@ -355,9 +374,23 @@ eps=1e-8
 #attempt at full expression from https://docu.ngsolve.org/v6.2.1810/i-tutorials/unit-3.4-simplehyp/shallow2D.html
 vela =  as_vector((u[1]('+'),u[2]('+')))
 velb =  as_vector((u[1]('-'),u[2]('-')))
+#swap 0 with function that matches derivatives? doesnt seem to make difference
+#vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),dot(vela,vela)/(eps))
+#vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),dot(velb,velb)/(eps))
 vnorma = conditional(sqrt(dot(vela,vela)) > eps,sqrt(dot(vela,vela)),0)
 vnormb = conditional(sqrt(dot(velb,velb)) > eps,sqrt(dot(velb,velb)),0)
 C = conditional( (vnorma + sqrt(g*h_wd('+'))) > (vnormb + sqrt(g*h_wd('-'))), (vnorma + sqrt(g*h_wd('+'))) ,  (vnormb + sqrt(g*h_wd('-')))) 
+#replace conditional with smoothiside-max
+#doesnt seem to make big difference
+'''
+def smoothiside_max(vnorma,vnormb,h_wd,g=9.81,k=20):
+	x = vnorma + sqrt(g*h_wd('+')) - ( vnormb + sqrt(g*h_wd('-')) ) 
+	s1 = (0.5+0.5*tanh(k*x))
+	s2 = (0.5+0.5*tanh(-k*x))
+	return s1*(vnorma + sqrt(g*h_wd('+'))) + s2*( vnormb + sqrt(g*h_wd('-')) )
+
+C = smoothiside_max(vnorma,vnormb,h_wd,g=9.81,k=20)
+'''
 flux = dot(avg(Fu), n('+')) + 0.5*C*jump(Q)
 
 F += inner(flux, jump(p))*dS
@@ -445,9 +478,9 @@ Newton_Solver = CustomNewtonProblem(F,u,[], domain.comm, solver_parameters=param
 nt=int(np.ceil((tf-ts)/dt))
 #set up array to record any time series at points
 local_cells,local_points = init_stations(domain,stations)
-station_data = np.zeros((nt+1,local_points.shape[0],3))
-#record initial data
-station_data[0,:,:] = record_stations(u_n,f_wd,h_b,local_points,local_cells)
+station_data = np.zeros((nt,local_points.shape[0],3))
+#dont record initial data
+#station_data[0,:,:] = record_stations(u_n,f_wd,h_b,local_points,local_cells)
 
 #time begins at ts
 t=ts
@@ -477,7 +510,7 @@ for a in range(min(2,nt)):
 	#add data to station variable
 	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
 	f_wd.interpolate(f_wd_expr)
-	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
+	station_data[a,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0 and plot_every <= nt:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
@@ -501,7 +534,7 @@ for a in range(2, nt):
 	#add data to station variable
 	f_wd_expr = fe.Expression(wd_f(wd_alpha,u[0]), V.sub(0).element.interpolation_points())
 	f_wd.interpolate(f_wd_expr)
-	station_data[a+1,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
+	station_data[a,:,:] = record_stations(u,h_b,f_wd,local_points,local_cells)
 	#Plot global solution
 	if a%plot_every==0:
 		plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=xmf,vtx_writers=writers)
@@ -526,7 +559,7 @@ coords,vals = gather_stations(0,domain.comm,local_points,station_data)
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 if rank ==0:
-	t_vec=np.linspace(ts,tf,nt+1)
+	t_vec=np.linspace(ts,tf,nt+1)[1:]
 	sec2day=60*60*24
 	t_vec=t_vec/sec2day
 	#optionally save csv or plot line plots of stations
@@ -534,7 +567,7 @@ if rank ==0:
 	np.savetxt(f"{filename}_stations_h.csv", vals[:,:,0], delimiter=",")
 	np.savetxt(f"{filename}_stations_xvel.csv", vals[:,:,1], delimiter=",")
 	np.savetxt(f"{filename}_stations_yvel.csv", vals[:,:,2], delimiter=",")
-	plt.plot(t_vec, vals[:,:,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,0,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.ylabel('surface elevation(m)')
@@ -542,7 +575,7 @@ if rank ==0:
 	plt.legend()
 	plt.savefig(f"{filename}_h_station.png")
 	plt.close()
-	plt.plot(t_vec, vals[:,:,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,1,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.title(f'Velocity in x-direction Over Time')
