@@ -40,7 +40,7 @@ else:
 #Filename for where outputs will go
 filename='TidalPropagation'
 #global output for every "plot_every" time steps
-plot_every=60
+plot_every=6
 #any user defined solver paramters
 rel_tol=1e-5
 abs_tol=1e-6
@@ -95,7 +95,7 @@ ts=0.0
 #tf is final time in seconds
 tf=7*24*60*60
 #time step size in seconds
-dt=100
+dt=600
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 

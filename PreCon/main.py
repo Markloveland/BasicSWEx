@@ -34,6 +34,21 @@ if release_no<=0 and version_no<8:
 	use_vtx=False
 else:
 	use_vtx=True
+#g is gravitational constant
+g=9.81
+'''
+Supercritical case. We still consider a 1000 m long channel, but with a constant discharge
+q D 2.5 m2=s on the whole domain [24]. The flow is supercritical both at inflow and at outflow,
+thus we consider the following boundary conditions:
+² upstream: q D 2.5 m2=s and h D hex.0/,
+downstream: free.
+The initial conditions are a dry channel
+h D 0 m and q D 0 m2=s.
+and the friction coefficients equal to n D 0.04 m-1/3s for Manning’s and f D 0.065 for
+Darcy–Weisbach’s friction law, the flow is supercritical.
+'''
+
+
 #######################################################################
 #General user inputs here#
 #Filename for where outputs will go
@@ -45,10 +60,10 @@ rel_tol=1e-5
 abs_tol=1e-6
 max_iter=10
 relax_param=1
-params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "line_smooth"}
+params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "ilu"}
 #Provide any points where you would like to record time series data
 #For n stations the np array should be nx3
-stations = np.array([[1000.5,1000.5,0.0]])
+stations = np.array([[500.5,255.0,0.0]])
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -60,21 +75,33 @@ x0 = 0.0
 y0 = 0.0
 #Coordinate of top right corner
 #Coordinate of top right corner
-y1= 2000.0
-x1= 2000.0
+x1= 1000.0
+y1= 500.0
 
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=10
+nx=20
 ny=10#5
+
+#exact solution
+def h_exact(x,g=9.81):
+	return ((4.0/g)**(1/3)*(1-0.2*np.exp(-36*(x/1000 - 1/2)**2)) )
+
+x_p = np.linspace(x0,x1,1000)
+
+h_true = h_exact(x_p)
+plt.plot(x_p,h_true)
+plt.savefig("Exact_h.png")
+plt.close()
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
-depth = 2
-vel_boundary_mag = 9.0
+depth = h_true[0]
+vel_boundary_mag = 2.5/depth
 flux_boundary_mag = depth*vel_boundary_mag
 
+print(np.sqrt(g*depth),vel_boundary_mag)
 #creates dolfinx mesh object partioned via MPI
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [[x0, y0],[x1, y1]], [nx, ny])
 
@@ -89,7 +116,7 @@ ts=0.0
 #tf is final time in seconds
 tf=3600#7*24*60*60
 #time step size in seconds
-dt=60.0
+dt=10.0
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -137,14 +164,16 @@ h_b = fe.Function(V_scalar)
 perturb_vel=0.0
 
 #Event though constant still needs to be function of x by convention
-h_b.interpolate(lambda x: depth + 0*x[0])
+slope=10
+h_b.interpolate(lambda x: depth + slope*x[0])
 
-
+h_init = fe.Function(V_scalar)
+h_init.interpolate(lambda x: depth + 0*x[0])
 #Initial condition assignment
 #in this case, initial condition is h=h_b, vel=(0,0)
 u_n.sub(0).interpolate(
 	fe.Expression(
-		h_b, 
+		h_init, 
 		V.sub(0).element.interpolation_points()))
   
 u_n.sub(1).interpolate(
@@ -430,6 +459,9 @@ lines = GenerateLines(cells,c_to_f,f_to_c,facet_flux,boundary_facets)
 DG0 = fe.functionspace(domain, ("DG", 0))
 cell_centroids = DG0.tabulate_dof_coordinates()
 #print("FIRST CENTROID", cell_centroids[0])
+print(lines)
+#doesnt work if lines are different order
+'''
 lines = np.array(lines)
 
 
@@ -459,7 +491,8 @@ for a,line in enumerate(lines):
 	plt.plot(cell_centroids[line,0],cell_centroids[line,1])
 
 plt.savefig("Lines.png")
-
+plt.close()
+'''
 ################################################################################
 ################################################################################
 
@@ -528,14 +561,14 @@ vel_boundary = vel_ex.x.array[vel_dirichlet_dofs]
 
 #aliasing to make reading easier
 h, ux, uy = u[0], u[1], u[2]
+h_d, ux_d, uy_d = u_ex[0], u_ex[1], u_ex[2]
 #also shorthand reference for flux variable:
 Q      =   as_vector((u[0], u[1]*u[0], u[2]*u[0] ))
 Qn     =   as_vector((u_n[0], u_n[1]*u_n[0], u_n[2]*u_n[0]))
 Qn_old =   as_vector((u_n_old[0], u_n_old[1]*u_n_old[0], u_n_old[2]*u_n_old[0] )) 
 
 
-#g is gravitational constant
-g=9.81
+
 
 
 #Flux tensor from SWE
@@ -550,6 +583,12 @@ Fu_wall = as_tensor([[0,0],
 					[0,0.5*g*h*h-0.5*g*h_b*h_b]
 					])
 
+#Dirichlet is enforced weakly
+Fu_inlet = as_tensor([[h_d*ux_d,h_d*uy_d], 
+				[h_d*ux_d*ux_d+ 0.5*g*h_d*h_d-0.5*g*h_b*h_b, h_d*ux_d*uy_d],
+				[h_d*ux_d*uy_d,h_d*uy_d*uy_d+0.5*g*h_d*h_d-0.5*g*h_b*h_b]
+				])
+
 
 #RHS source vector for SWE is gravity + bottom friction
 #can add in things like wind and pressure later
@@ -559,12 +598,26 @@ g_vec = as_vector((0,
 #there are many friction laws, here is an example of a quadratic law
 #Linear friction law or quadratic
 eps=1e-8
-cf=0.00025
+cf=0.04
+#try to avoid big jump
+#mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, (ux*ux+uy*uy)/eps, pow(ux*ux + uy*uy, 0.5))
+#doesnt seem to make big difference
+#mannings
+'''
+mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
+fric_vec=as_vector((0,
+                    ux*cf*cf*g*mag_v/(h**(1/3)),
+                    uy*cf*cf*g*mag_v/(h**(1/3))))
+'''
+#quadratic
+#'''
+eps=1e-8
+cf=g*0.065/(8*g)
 mag_v = conditional(pow(ux*ux + uy*uy, 0.5) < eps, 0, pow(ux*ux + uy*uy, 0.5))
 fric_vec=as_vector((0,
                     ux*cf*mag_v,
                     uy*cf*mag_v))
-
+#'''
 S = g_vec+fric_vec
 
 
@@ -585,8 +638,10 @@ F += inner(S,p)*dx
 #now adding in global boundary terms
 #now adding in global boundary terms
 for marker, func in boundaries:
-	if (marker == 1) or (marker == 2):
+	if (marker == 1):
 		#This is the open boundary in this case
+		F += dot(dot(Fu_inlet, n), p) * ds(marker)
+	elif marker==2:
 		F += dot(dot(Fu, n), p) * ds(marker)
 	else:
 		print("Adding wall condition \n\n")
@@ -667,6 +722,7 @@ def plot_global_output(u,h_b,V_scalar,V_vel,t,xdmf=None,vtx_writers=None):
 
 #######Initialize a solver object###########
 #utilize the custom Newton solver class instead of the fe.petsc Nonlinear class
+dirichlet_conditions = []
 Newton_Solver = CustomNewtonProblem(F,u,dirichlet_conditions, domain.comm, solver_parameters=params,lines=lines,mesh=domain)
 
 
