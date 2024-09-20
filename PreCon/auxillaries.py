@@ -3,6 +3,38 @@ import numpy as np
 from dolfinx import __version__
 from ufl import (as_vector,conditional,sqrt,dot,avg,jump,as_tensor)
 from dolfinx.cpp.mesh import cell_num_entities
+from scipy.integrate import RK45
+import scipy.interpolate as interp
+
+def get_h_b_MacDonalds(x,q,cf,g=9.81,dx=0.1,h_b_0=0.0):
+    def get_bath_grad(x,z):
+        g=9.81
+        h = (4.0/g)**(1/3)*(1-0.2*np.exp(-36*(x/1000 - 1/2)**2))
+        dxdh = (4.0/g)**(1/3)*((0.0000144*x - .0072)*np.exp(-9*(x-500)**2/250000))
+        Sf = (cf/(8*g))*q*q/(h**(3))
+        return np.array([(q**2/(g*h**3) - 1)*dxdh - Sf])
+    x0 = np.amin(x)
+    print(x0)
+    x1 = np.amax(x)
+    integrator = RK45(get_bath_grad, x0, np.array([h_b_0]), x1,max_step=dx)
+    t_values = [x0]
+    y_values = [[h_b_0]]
+
+    while integrator.t < x1:
+        integrator.step()
+        t_values.append(integrator.t)
+        y_values.append(integrator.y)
+
+
+    t_values = np.array(t_values)
+    y_values = np.array(y_values).flatten()
+
+    #now interpolate to x coordinates
+    # Cubic spline interpolation
+    interp_method = interp.interp1d(t_values, y_values, kind='cubic')
+    h_b_interp = interp_method(x)
+    return h_b_interp
+
 def init_stations(domain,points):
     #reads in recording stations and outputs points on each processor
     try:

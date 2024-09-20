@@ -20,7 +20,7 @@ from boundaryconditions import BoundaryCondition,MarkBoundary
 from newton import CustomNewtonProblem
 from auxillaries import (init_stations, record_stations, gather_stations, get_F, get_LF_flux_form,
 compute_cell_boundary_facets, compute_interior_facet_integration_entities, get_interior_facets,
-compute_norm_special)
+compute_norm_special, get_h_b_MacDonalds)
 from dolfinx.cpp.mesh import cell_num_entities
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
@@ -61,9 +61,7 @@ abs_tol=1e-6
 max_iter=10
 relax_param=1
 params = {"rtol": rel_tol, "atol": abs_tol, "max_it":max_iter, "relaxation_parameter":relax_param, "ksp_type": "gmres", "pc_type": "ilu"}
-#Provide any points where you would like to record time series data
-#For n stations the np array should be nx3
-stations = np.array([[500.5,255.0,0.0]])
+
 ########################################################################
 ########################################################################
 #######Define the physical domain########
@@ -78,11 +76,18 @@ y0 = 0.0
 x1= 1000.0
 y1= 500.0
 
+#Provide any points where you would like to record time series data
+#For n stations the np array should be nx3
+n_stat = 100
+x_stat = np.linspace(x0,x1,n_stat)
+y_stat = np.zeros(n_stat)+ 255.5
+stations = np.column_stack((x_stat,y_stat,np.zeros(n_stat)))
+
 
 #Now define mesh properties
 #number of cells in x and y direction
-nx=20
-ny=10#5
+nx=100
+ny=50#5
 
 #exact solution
 def h_exact(x,g=9.81):
@@ -97,8 +102,10 @@ plt.close()
 
 #Propagation velocity entering the left side
 #A proper bc should be flux maybe?
+cf_quad = 0.065
+q0=2.5
 depth = h_true[0]
-vel_boundary_mag = 2.5/depth
+vel_boundary_mag = q0/depth
 flux_boundary_mag = depth*vel_boundary_mag
 
 print(np.sqrt(g*depth),vel_boundary_mag)
@@ -116,7 +123,7 @@ ts=0.0
 #tf is final time in seconds
 tf=3600#7*24*60*60
 #time step size in seconds
-dt=10.0
+dt=60.0
 #####################################################################################
 ####We need to identify function spaces before we can assign initial conditions######
 
@@ -162,10 +169,16 @@ p = as_vector((p1,p2[0],p2[1]))
 h_b = fe.Function(V_scalar)
 #also velocity assignment
 perturb_vel=0.0
+#need to solve ODE in order to define bathymetry
+dof_x_coords = V_scalar.tabulate_dof_coordinates()[:,0]
+h_b_data = get_h_b_MacDonalds(dof_x_coords,q0,cf_quad)
+#plt.scatter(dof_x_coords,h_b)
+#plt.savefig("bathy_from_run.png")
+h_b.x.array[:] = -h_b_data[:]
 
 #Event though constant still needs to be function of x by convention
-slope=10
-h_b.interpolate(lambda x: depth + slope*x[0])
+#slope=.024
+#h_b.interpolate(lambda x: depth + slope*x[0])
 
 h_init = fe.Function(V_scalar)
 h_init.interpolate(lambda x: depth + 0*x[0])
@@ -186,7 +199,7 @@ u_n.sub(1).interpolate(
 h_ex = u_ex.sub(0)
 h_ex.interpolate(
 	fe.Expression(
-		h_b,
+		fe.Constant(domain, ScalarType(depth)),
 		V.sub(0).element.interpolation_points())
 	)
 vel_ex = u_ex.sub(1)
@@ -585,8 +598,8 @@ Fu_wall = as_tensor([[0,0],
 
 #Dirichlet is enforced weakly
 Fu_inlet = as_tensor([[h_d*ux_d,h_d*uy_d], 
-				[h_d*ux_d*ux_d+ 0.5*g*h_d*h_d-0.5*g*h_b*h_b, h_d*ux_d*uy_d],
-				[h_d*ux_d*uy_d,h_d*uy_d*uy_d+0.5*g*h_d*h_d-0.5*g*h_b*h_b]
+				[h_d*ux_d*ux_d + 0.5*g*h_d*h_d-0.5*g*h_b*h_b, h_d*ux_d*uy_d],
+				[h_d*ux_d*uy_d, h_d*uy_d*uy_d+0.5*g*h_d*h_d-0.5*g*h_b*h_b]
 				])
 
 
@@ -817,7 +830,7 @@ if rank ==0:
 	np.savetxt(f"{filename}_stations_h.csv", vals[:,:,0], delimiter=",")
 	np.savetxt(f"{filename}_stations_xvel.csv", vals[:,:,1], delimiter=",")
 	np.savetxt(f"{filename}_stations_yvel.csv", vals[:,:,2], delimiter=",")
-	plt.plot(t_vec, vals[:,:,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,40,0].flatten(), "--", linewidth=2, label="h at x= "+str(stations[40,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.ylabel('surface elevation(m)')
@@ -825,10 +838,29 @@ if rank ==0:
 	plt.legend()
 	plt.savefig(f"{filename}_h_station.png")
 	plt.close()
-	plt.plot(t_vec, vals[:,:,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[0,0]))
+	plt.plot(t_vec, vals[:,40,1].flatten(), "--", linewidth=2, label="ux at "+str(stations[40,0]))
 	plt.grid(True)
 	plt.xlabel("t(days)")
 	plt.title(f'Velocity in x-direction Over Time')
 	plt.legend()
 	plt.savefig(f"{filename}_ux_station.png")
+	plt.close()
+
+
+#plot steady state at end
+plt.plot(x_stat, vals[-1,:,0].flatten(), "--", linewidth=2, label="h at steady state ")
+plt.grid(True)
+plt.xlabel("x(m)")
+plt.ylabel('depth(m)')
+plt.title(f'Steady State Depth')
+plt.legend()
+plt.savefig(f"{filename}_final_h.png")
+plt.close()
+plt.plot(x_stat, vals[-1,:,1].flatten(), "--", linewidth=2, label="ux at steady state")
+plt.grid(True)
+plt.xlabel("x(m))")
+plt.title(f'Velocity in x-direction Over Time')
+plt.legend()
+plt.savefig(f"{filename}_final_ux.png")
+
 
